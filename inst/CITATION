@@ -1,0 +1,10 @@
+bibentry(
+     bibtype = "Article",
+     title = "ELSA: An Entropy-based Local indicators of Spatial Association",
+     author = as.person("Babak Naimi [aut], Nicholas A. Hamm [aut], Thomas A. Groen [aut], Andrew K. Skidmore [aut], Alberto G. Toxopeus [aut]"),
+     year = "2016",
+     journal = "Geographical Analysis",
+     volume = "??",
+     pages = "???",
+     doi = "???"
+   )

@@ -1,0 +1,26 @@
+[general]
+creator=R package 'raster'
+created=2016-08-04 05:11:31
+[georeference]
+nrows=39
+ncols=57
+xmin=304000
+ymin=4052000
+xmax=361000
+ymax=4091000
+projection=NA
+[data]
+datatype=FLT8S
+byteorder=little
+nbands=1
+bandorder=BIL
+categorical=FALSE
+minvalue=15.8016500473022
+maxvalue=1714.13500976562
+nodatavalue=-1.7e+308
+[legend]
+legendtype=
+values=
+color=
+[description]
+layername=ele1
