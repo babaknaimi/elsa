@@ -2,12 +2,14 @@
 
 \alias{categorize}
 \alias{categorize,RasterLayer-method}
+\alias{categorize,RasterStackBrick-method}
 \alias{categorize,numeric-method}
+\alias{categorize,list-method}
 
 \title{Categorizing continious data}
 
 \description{
-A function to categorize (discretize) numerical data in the form of a raster layer, or a vector.
+A function to categorize (discretize or binning) numerical data in the form of a raster layer, or a vector.
 }
 
 \usage{
@@ -31,7 +33,8 @@ If nc is not specified, the function calls the function \code{nclass} to find th
 }
 
 \references{
-Naimi. B. et al. (under review) ELSA: An Entropy-based Local indicators of Spatial Association, Geographical Analysis;
+
+Naimi, B., Hamm, N. A., Groen, T. A., Skidmore, A. K., Toxopeus, A. G., & Alibakhshi, S. (2019). ELSA: Entropy-based local indicator of spatial association. Spatial statistics, 29, 66-88.
 }
 
 \author{Babak Naimi \email{naimi.b@gmail.com}
@@ -52,4 +55,4 @@ plot(rc, main='categorized map')
 
 }
 
-\keyword{spatial}
+\keyword{spatial, binning}

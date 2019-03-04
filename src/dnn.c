@@ -1,6 +1,7 @@
 
 /*
- * Babak Naimi, July 2016
+ * Babak Naimi, July 2016 (last update: April 2018)
+ * version: 1.0
  * naimi.b@gmail.com
  * 
  * Most parts of this code is copied from spdep package (written by Roger Bivand) 
@@ -32,35 +33,35 @@ void gcdist(double *lon1, double *lon2, double *lat1, double *lat2,
   
   DE2RA = M_PI/180;
   a = 6378.137;              /* WGS-84 equatorial radius in km */
-f = 1.0/298.257223563;     /* WGS-84 ellipsoid flattening factor */
+  f = 1.0/298.257223563;     /* WGS-84 ellipsoid flattening factor */
 
-lat1R = lat1[0]*DE2RA;
-lat2R = lat2[0]*DE2RA;
-lon1R = lon1[0]*DE2RA;
-lon2R = lon2[0]*DE2RA;
+  lat1R = lat1[0]*DE2RA;
+  lat2R = lat2[0]*DE2RA;
+  lon1R = lon1[0]*DE2RA;
+  lon2R = lon2[0]*DE2RA;
 
-F = ( lat1R + lat2R )/2.0;
-G = ( lat1R - lat2R )/2.0;
-L = ( lon1R - lon2R )/2.0;
+  F = ( lat1R + lat2R )/2.0;
+  G = ( lat1R - lat2R )/2.0;
+  L = ( lon1R - lon2R )/2.0;
 
-sinG2 = R_pow_di( sin( G ), 2 );
-cosG2 = R_pow_di( cos( G ), 2 );
-sinF2 = R_pow_di( sin( F ), 2 );
-cosF2 = R_pow_di( cos( F ), 2 );
-sinL2 = R_pow_di( sin( L ), 2 );
-cosL2 = R_pow_di( cos( L ), 2 );
+  sinG2 = R_pow_di( sin( G ), 2 );
+  cosG2 = R_pow_di( cos( G ), 2 );
+  sinF2 = R_pow_di( sin( F ), 2 );
+  cosF2 = R_pow_di( cos( F ), 2 );
+  sinL2 = R_pow_di( sin( L ), 2 );
+  cosL2 = R_pow_di( cos( L ), 2 );
 
-S = sinG2*cosL2 + cosF2*sinL2;
-C = cosG2*cosL2 + sinF2*sinL2;
+  S = sinG2*cosL2 + cosF2*sinL2;
+  C = cosG2*cosL2 + sinF2*sinL2;
 
-w = atan( sqrt( S/C ) );
-R = sqrt( S*C )/w;
+  w = atan( sqrt( S/C ) );
+  R = sqrt( S*C )/w;
 
-D = 2*w*a;
-H1 = ( 3*R - 1 )/( 2*C );
-H2 = ( 3*R + 2 )/( 2*S );
+  D = 2*w*a;
+  H1 = ( 3*R - 1 )/( 2*C );
+  H2 = ( 3*R + 2 )/( 2*S );
 
-dist[0] = D*( 1 + f*H1*sinF2*cosG2 - f*H2*cosF2*sinG2 ); 
+  dist[0] = D*( 1 + f*H1*sinF2*cosG2 - f*H2*cosF2*sinG2 ); 
 
 }
 
@@ -277,8 +278,9 @@ SEXP dnn(SEXP x, SEXP y, SEXP d1, SEXP d2, SEXP lonlat) {
       if (j == i) continue;
       x2[0]=xx[j];
       y2[0]=yy[j];
-      if (ll == 0) dist = hypot((x1[0]-x2[0]), (y1[0]-y2[0]));
-      else {
+      if (ll == 0) {
+        dist = hypot((x1[0]-x2[0]), (y1[0]-y2[0]));
+      } else {
         gcdist(x1, x2, y1, y2, gc);
         dist = gc[0];
       }
@@ -293,6 +295,72 @@ SEXP dnn(SEXP x, SEXP y, SEXP d1, SEXP d2, SEXP lonlat) {
       SET_VECTOR_ELT(ans, i, NEW_INTEGER(q));
       for (k = 0; k < q; k++) {
         INTEGER_POINTER(VECTOR_ELT(ans, i))[k] = xn[k] + 1;
+      }
+    } else {
+      SET_VECTOR_ELT(ans,i,R_NilValue);
+    }
+  }
+  UNPROTECT(nProtected);
+  return(ans);
+  
+}
+////
+
+SEXP dist(SEXP x, SEXP y, SEXP d1, SEXP d2, SEXP lonlat) {
+  int nProtected=0;
+  int q, n, ll;
+  double x1[1], y1[1], x2[1], y2[1], gc[1];
+  double dist, xd1, xd2;
+  ll = INTEGER_POINTER(lonlat)[0];
+  
+  R_len_t i, j, k;
+  
+  SEXP ans;
+  double *xx, *yy;
+  
+  n=length(x);
+  
+  PROTECT(ans = NEW_LIST(n));
+  ++nProtected;
+  
+  PROTECT(x = coerceVector(x, REALSXP));
+  ++nProtected;
+  PROTECT(y = coerceVector(y, REALSXP));
+  ++nProtected;
+  
+  xd1 = NUMERIC_POINTER(d1)[0];
+  xd2 = NUMERIC_POINTER(d2)[0];
+  
+  xx=REAL(x);
+  yy=REAL(y);
+  
+  for (i=0;i < n;i++) {
+    x1[0]=xx[i];
+    y1[0]=yy[i];
+    
+    double xn[n];
+    q=0;
+    for (j=0;j < n;j++) {
+      if (j == i) continue;
+      x2[0]=xx[j];
+      y2[0]=yy[j];
+      if (ll == 0) {
+        dist = hypot((x1[0]-x2[0]), (y1[0]-y2[0]));
+      } else {
+        gcdist(x1, x2, y1, y2, gc);
+        dist = gc[0];
+      }
+      
+      if (dist <= xd2 && dist >= xd1) {
+        xn[q] = dist;
+        q=q + 1;
+      }
+    }
+    
+    if (q > 0) {
+      SET_VECTOR_ELT(ans, i, NEW_NUMERIC(q));
+      for (k = 0; k < q; k++) {
+        NUMERIC_POINTER(VECTOR_ELT(ans, i))[k] = xn[k];
       }
     } else {
       SET_VECTOR_ELT(ans,i,R_NilValue);

@@ -1,7 +1,7 @@
 /* Babak Naimi, July 2016
    naimi.b@gmail.com
-   July 2016
-   v 1.1
+   May 2018
+   v 1.2
 */
 
 
@@ -147,7 +147,7 @@ SEXP localmoran(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
 SEXP localgeary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   int nProtected=0;
   int c, row, col, ngb, nnr, nnc, nrow, ncol, cellnr, n;
-  double xi;
+  double xi, q;
   
   R_len_t i, j;
   
@@ -206,6 +206,7 @@ SEXP localgeary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
     col = (j + 1) - ((row - 1) * ncol);
     
     Eij=0;
+    q = 0;
     for (i=0; i < ngb; i++) {
       nnr= row + xrr[i];
       nnc = col + xcc[i];
@@ -214,12 +215,13 @@ SEXP localgeary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
         cellnr = ((nnr - 1) * ncol) + nnc;
         if (!R_IsNA(xv[(cellnr-1)])) {
           Eij=Eij+pow(xi - xv[(cellnr-1)],2);
+          q+=1;
         }
       }
     }
     //----
     
-    xans[j] = Eij / s2;
+    xans[j] = (Eij / (2 * q)) / s2;
   } 
   free(xcells);
   UNPROTECT(nProtected);
@@ -434,7 +436,7 @@ SEXP localmoran_vector(SEXP v, SEXP nb) {
 SEXP localgeary_vector(SEXP v, SEXP nb) {
   int nProtected=0;
   int c, ngb, n;
-  double xi, a;
+  double xi, a, q;
   R_len_t i, j;
   
   SEXP ans;
@@ -475,15 +477,17 @@ SEXP localgeary_vector(SEXP v, SEXP nb) {
     
     ngb = length(VECTOR_ELT(nb,c));
     Eij=0;
+    q = 0;
     for (i=0;i < ngb;i++) {
       a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
       if (!R_IsNA(a)) {
         Eij=Eij+pow(xi - a,2);
+        q+=1;
       }
     }
     //----
     
-    xans[j] = Eij / s2;
+    xans[j] = (Eij / (2 * q)) / s2;
   }
   free(xcells);
   UNPROTECT(nProtected);

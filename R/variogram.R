@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# Latest Update: April 2017
-# Version 1.3
+# Latest Update: March 2019
+# Version 1.4
 # Licence GPL v3 
 
 if (!isGeneric("Variogram")) {
@@ -69,8 +69,8 @@ setMethod('Variogram', signature(x='RasterLayer'),
                 out@variogram [i,2] <- mean(w)
               }
             } else {
-              if (!is.na(projection(r1))) {
-                longlat <- strsplit(trim(strsplit(projection(r1),'\\+')[[1]][2]),'=')[[1]][2] == 'longlat'
+              if (!is.na(projection(x))) {
+                longlat <- strsplit(trim(strsplit(projection(x),'\\+')[[1]][2]),'=')[[1]][2] == 'longlat'
                 if (is.na(longlat) || !is.logical(longlat)) longlat <- NULL
               } else longlat <- NULL
               out <- Variogram(s,width,cutoff,zcol=names(x),cloud=cloud,s=NULL,longlat=longlat,...)

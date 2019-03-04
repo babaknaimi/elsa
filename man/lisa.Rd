@@ -40,11 +40,11 @@ This function can calculate different LISA statistics at each location in the in
 
 \references{
 
+Naimi, B., Hamm, N. A., Groen, T. A., Skidmore, A. K., Toxopeus, A. G., & Alibakhshi, S. (2019). ELSA: Entropy-based local indicator of spatial association. Spatial statistics, 29, 66-88.
 Anselin, L. 1995. Local indicators of spatial association, Geographical Analysis, 27, 93--115;
 
 Getis, A. and Ord, J. K. 1996 Local spatial statistics: an overview. In P. Longley and M. Batty (eds) \emph{Spatial analysis: modelling in a GIS environment} (Cambridge: Geoinformation International), 261--277.
 
-Naimi. B. et al. (under review) ELSA: An Entropy-based Local indicators of Spatial Association, \emph{Geographical Analysis}
 
 }
 

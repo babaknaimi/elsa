@@ -9,7 +9,7 @@
 \title{Elsa test for local spatial autocorrelation}
 
 \description{
-This function can be used to convert a data.frame including the values specifying the differences (digree of dissimilarities) between the classes (categories) in a categoricl map, to a list.
+This function uses a non-parametric approach to test whether local spatial autocorrelation (characterised by ELSA) is significant. It generates a p-value at each spatial location (a raster cell or spatial point/polygon) that can be used to infer the significancy of local spatial autocorrelation.
 }
 
 \usage{
@@ -30,7 +30,7 @@ elsa.test(x, d, n, method, null, nc, categorical, dif,...)
 \details{
 This function test how significant the local spatial autocorrelation is at each location, so it generates a p-value at each location through a Monte Carlo simulation and a non-parametric approach. See the reference for the details about the method.
 
-If \code{null} distribution is not provided, the function generates a null distribution by drawing a sample at each location from a unique set of m values in dataset (categories) each having a probability of \eqn{1/m}. 
+If \code{null} distribution is not provided, the function generates a null distribution by randomly shuffling the values in the dataset. 
 
 }
 
@@ -40,7 +40,8 @@ An object same as the input (\code{x})
 }
 
 \references{
-Naimi. B. et al. (under review) ELSA: An Entropy-based Local indicators of Spatial Association, Geographical Analysis;
+
+Naimi, B., Hamm, N. A., Groen, T. A., Skidmore, A. K., Toxopeus, A. G., & Alibakhshi, S. (2019). ELSA: Entropy-based local indicator of spatial association. Spatial statistics, 29, 66-88.
 
 }
 
@@ -58,7 +59,7 @@ r <- raster(file)
 
 plot(r,main='a continuous raster map')
 
-et <- elsa.test(r,d=2000,n=99)
+et <- elsa.test(r,d=2000,n=99, categorical=FALSE)
 
 plot(et)
 

@@ -1,6 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
-# Version 1.1
+# Last Update :  March 2019
+# Version 1.3
 # Licence GPL v3 
 
 # based on the functions poly2nb and dnearneigh in spdep package (Roger Bivand):
@@ -75,6 +76,10 @@
 #------
 .dnn.xy <- function(x,d1,d2,longlat) {
   .Call("dnn", x[,1], x[,2], d1, d2, as.integer(longlat), PACKAGE = "elsa")
+}
+
+.distance.xy <- function(x,d1,d2,longlat) {
+  .Call("dist", x[,1], x[,2], d1, d2, as.integer(longlat), PACKAGE = "elsa")
 }
 
 ######################################
@@ -169,8 +174,76 @@ setMethod('dneigh', signature(x='data.frameORmatrix'),
             
             if (d2 <= d1) stop('d2 should be greater than d1')
             z <- .dnn.xy(as.matrix(x),d1,d2,longlat)
+            
             if (all(sapply(z,is.null))) stop('There is no links within the specified distance!')
             z <- new('neighbours',distance1=d1,distance2=d2,neighbours=z)
+            return(z)
+          }
+)
+###########################
+
+if (!isGeneric("neighd")) {
+  setGeneric("neighd", function(x, d1, d2, longlat,...)
+    standardGeneric("neighd"))
+}
+
+
+
+setMethod('neighd', signature(x='SpatialPoints'), 
+          function(x, d1, d2, longlat,...) {
+            if (missing(longlat) || is.null(longlat) || !is.logical(longlat)) longlat <- .is.projected(x)
+            
+            if (missing(d1) || is.null(d1) || !is.numeric(d1)) d1 <- 0
+            
+            if (missing(d2)) stop('d2 should be provided')
+            
+            if (d2 <= d1) stop('d2 should be greater than d1')
+            
+            x <- coordinates(x)
+            if (nrow(x) < 1) stop("no records in x")
+            if (ncol(x) > 2) stop("Only 2D data accepted")
+            z <- .distance.xy(x,d1,d2,longlat)
+            if (all(sapply(z,is.null))) stop('There is no links within the specified distance!')
+            return(z)
+          }
+)
+
+
+setMethod('neighd', signature(x='data.frameORmatrix'), 
+          function(x, d1, d2, longlat,...) {
+            if (nrow(x) < 1) stop("no records in x")
+            if (missing(longlat) || is.null(longlat) || !is.logical(longlat)) longlat <- .is.projected(x)
+            if (missing(d1) || is.null(d1) || !is.numeric(d1)) d1 <- 0
+            
+            if (missing(d2)) stop('d2 should be provided')
+            
+            if (d2 <= d1) stop('d2 should be greater than d1')
+            z <- .distance.xy(as.matrix(x),d1,d2,longlat)
+            if (all(sapply(z,is.null))) stop('There is no links within the specified distance!')
+            return(z)
+          }
+)
+
+
+
+
+setMethod('neighd', signature(x='SpatialPolygons'), 
+          function(x, d1, d2, longlat,...) {
+            if (missing(longlat) || is.null(longlat) || !is.logical(longlat)) longlat <- .is.projected(x)
+            
+            if (missing(d1) || is.null(d1) || !is.numeric(d1)) d1 <- 0
+            
+            if (missing(d2)) stop('d2 should be provided')
+            
+            if (d2 <= d1) stop('d2 should be greater than d1')
+            
+            x <- coordinates(x)
+            
+            if (nrow(x) < 1) stop("no records in x")
+            
+            z <- .distance.xy(x,d1,d2,longlat)
+            
+            if (all(sapply(z,is.null))) stop('There is no links within the specified distance!')
             return(z)
           }
 )

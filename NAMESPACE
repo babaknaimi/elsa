@@ -1,9 +1,9 @@
 import(sp, methods)
 importFrom("graphics", "points","boxplot","abline")
 importFrom("stats", "cor","quantile","sd")
-importFrom("raster",  "raster", "brick","cellStats","ncell","trim","writeStart","blockSize","pbCreate",
-           "getValues","writeValues","pbStep","writeStop","pbClose","res","canProcessInMemory","sampleRandom",
-           "writeRaster","calc","xmin","xmax","ymin","ymax","unique","compareRaster","setValues","addLayer")
+importFrom("raster",  "raster", "brick","cellStats","ncell","trim","writeStart","blockSize","pbCreate","update",
+           "getValues","writeValues","pbStep","writeStop","pbClose","res","canProcessInMemory","sampleRandom","nlayers",
+           "writeRaster","calc","xmin","xmax","ymin","ymax","unique","compareRaster","setValues","addLayer","projection")
 exportClasses(Entrogram, neighbours)
 exportMethods(elsa,dneigh,categorize,entrogram,nclass,dif2list,elsa.test,Variogram,lisa,moran, 
               geary,correlogram)

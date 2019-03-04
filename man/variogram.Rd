@@ -31,7 +31,8 @@ Variogram is a graph to explore spatial structure in a single variable. A variog
 }
 
 \references{
-Naimi. B. et al. (under review) ELSA: An Entropy-based Local indicators of Spatial Association, Geographical Analysis;
+
+Naimi, B., Hamm, N. A., Groen, T. A., Skidmore, A. K., Toxopeus, A. G., & Alibakhshi, S. (2019). ELSA: Entropy-based local indicator of spatial association. Spatial statistics, 29, 66-88.
 }
 
 \author{Babak Naimi \email{naimi.b@gmail.com}

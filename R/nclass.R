@@ -1,6 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# Version 2.0
+# Last update: March 2019
+# Version 2.1
 # Licence GPL v3 
 
 
@@ -16,11 +17,9 @@ setMethod('nclass', signature(x='RasterLayer'),
             if (missing(th)) th <- 0.005
             if (canProcessInMemory(x,2)) {
               w <- which(!is.na(x[]))
-              if (length(w) > 10000 & length(w) < 20000) w <- w[sample(1:length(w),length(w)*0.3)]
-              else if (length(w) > 20000) w <- w[sample(1:length(w),length(w)*0.2)]
+              w <- w[sample(length(w),min(round(length(w) * 0.8),1e4))]
             } else {
-              if ((ncell(x) * 0.2) < 5000 & ncell(x) > 5000) w <- 5000
-              else w <- round(ncell(x) * 0.2)
+              w <- min(round(ncell(x) * 0.8),1e4)
               w <- sampleRandom(x,w,cells=TRUE)[,1]
             }
             xx <- x[w]

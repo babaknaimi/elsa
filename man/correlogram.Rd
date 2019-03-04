@@ -5,10 +5,10 @@
 \alias{correlogram,Spatial-method}
 
 
-\title{Correlogram from Spatial Data}
+\title{Correlogram of Spatial Data}
 
 \description{
-Compute Correlogram from spatial data. The function returns a binned correlogram by calculating Moran's I (spatial autocorrelation) in different range of distances.
+Compute Correlogram of spatial data. The function returns a binned correlogram by calculating Moran's I (spatial autocorrelation) in different range of distances.
 }
 
 \usage{
@@ -31,7 +31,8 @@ Correlogram is a graph to explore spatial structure in a single variable. A corr
 }
 
 \references{
-Naimi. B. et al. (under review) ELSA: An Entropy-based Local indicators of Spatial Association, Geographical Analysis;
+
+Naimi, B., Hamm, N. A., Groen, T. A., Skidmore, A. K., Toxopeus, A. G., & Alibakhshi, S. (2019). ELSA: Entropy-based local indicator of spatial association. Spatial statistics, 29, 66-88.
 }
 
 \author{Babak Naimi \email{naimi.b@gmail.com}

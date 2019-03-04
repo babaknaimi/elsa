@@ -1,6 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# Version 2.1
+# last update: April 2018
+# Version 2.2
 # Licence GPL v3 
 
 .checkrasterMemory <- function(cells,n=1) {
@@ -15,8 +16,15 @@ if (!isGeneric("entrogram")) {
 
 
 setMethod('entrogram', signature(x='RasterLayer'), 
-          function(x, width, cutoff, categorical, nc, dif, cloud=FALSE, s=NULL,...) {
+          function(x, width, cutoff, categorical, nc, dif, cloud=FALSE, s=NULL,stat,...) {
             re <- res(x)[1]
+            
+            if (missing(stat)) stat <- 'ELSA'
+            else {
+              stat <- toupper(stat)
+              if (!stat %in% c('ELSA','EA','EC')) stop('stat should be either of "ELSA", "Ea", "Ec"!')
+            }
+            
             if (missing(cutoff)) cutoff<- sqrt((xmin(x)-xmax(x))^2+(ymin(x)-ymax(x))^2) / 3
             if (missing(width)) width <- re
             else if (width < re) width <- re
@@ -107,9 +115,13 @@ setMethod('entrogram', signature(x='RasterLayer'),
                 w <-.Filter(r=res(x)[1],d1=0,d2=i*width)
                 w <- w[[2]]
                 if (categorical) {
-                  out@entrogramCloud[,i] <- .Call('v_elsac_cell', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(s), PACKAGE='elsa')
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogramCloud[,i] <- .Call('v_elsac_cell', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(s), PACKAGE='elsa')
+                  else if (stat == 'EA') out@entrogramCloud[,i] <- .Call('v_elsac_cell_Ea', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(s), PACKAGE='elsa')
+                  else if (stat == 'EC') out@entrogramCloud[,i] <- .Call('v_elsac_cell_Ec', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(s), PACKAGE='elsa')
                 } else {
-                  out@entrogramCloud[,i] <- .Call('v_elsa_cell', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(s), PACKAGE='elsa')
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogramCloud[,i] <- .Call('v_elsa_cell', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(s), PACKAGE='elsa')
+                  else if (stat == 'EA') out@entrogramCloud[,i] <- .Call('v_elsa_cell_Ea', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(s), PACKAGE='elsa')
+                  else if (stat == 'EC') out@entrogramCloud[,i] <- .Call('v_elsa_cell_Ec', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(s), PACKAGE='elsa')
                 }
                 #out@entrogramCloud[,i] <- elsa(x,d=i*width,nc=nc,categorical=categorical,dif=dif,cells=s)
               }
@@ -120,9 +132,13 @@ setMethod('entrogram', signature(x='RasterLayer'),
               for (i in 1:nlag) {
                 w <-.Filter(r=res(x)[1],d1=0,d2=i*width)[[2]]
                 if (categorical) {
-                  out@entrogram [i,2] <- mean(.Call('v_elsac_cell', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(s), PACKAGE='elsa'),na.rm=TRUE)
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogram [i,2] <- mean(.Call('v_elsac_cell', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(s), PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EA') out@entrogram [i,2] <- mean(.Call('v_elsac_cell_Ea', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(s), PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EC') out@entrogram [i,2] <- mean(.Call('v_elsac_cell_Ec', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(s), PACKAGE='elsa'),na.rm=TRUE)
                 } else {
-                  out@entrogram [i,2] <- mean(.Call('v_elsa_cell', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(s), PACKAGE='elsa'),na.rm=TRUE)
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogram [i,2] <- mean(.Call('v_elsa_cell', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(s), PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EA') out@entrogram [i,2] <- mean(.Call('v_elsa_cell_Ea', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(s), PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EC') out@entrogram [i,2] <- mean(.Call('v_elsa_cell_Ec', as.integer(x[]), as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(s), PACKAGE='elsa'),na.rm=TRUE)
                 }
                 #out@entrogram [i,2] <- mean(elsa(x,d=i*width,nc=nc,categorical=categorical,dif=dif,cells=s),na.rm=TRUE)
               }
@@ -134,10 +150,16 @@ setMethod('entrogram', signature(x='RasterLayer'),
 
 #-------
 setMethod('entrogram', signature(x='SpatialPolygonsDataFrame'), 
-          function(x, width, cutoff, categorical, nc, dif, zcol,  cloud=FALSE, s=NULL,method,longlat,...) {
+          function(x, width, cutoff, categorical, nc, dif, zcol,  cloud=FALSE, s=NULL,method,longlat,stat,...) {
             n <- nrow(x)
             
             if (missing(longlat)) longlat <- NULL
+            
+            if (missing(stat)) stat <- 'ELSA'
+            else {
+              stat <- toupper(stat)
+              if (!stat %in% c('ELSA','EA','EC')) stop('stat should be either of "ELSA", "Ea", "Ec"!')
+            }
             
             if (missing(cutoff)) cutoff<- sqrt((xmin(x)-xmax(x))^2+(ymin(x)-ymax(x))^2) / 3
             if (missing(width)) width <- cutoff / 15
@@ -226,9 +248,13 @@ setMethod('entrogram', signature(x='SpatialPolygonsDataFrame'),
               for (i in 1:nlag) {
                 d <- dneigh(xy,d1=0,d2=i*width,method = method,longlat = longlat)@neighbours
                 if (categorical) {
-                  out@entrogramCloud[,i] <- .Call('v_elsac_vector', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa')
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogramCloud[,i] <- .Call('v_elsac_vector', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa')
+                  else if (stat == 'EA') out@entrogramCloud[,i] <- .Call('v_elsac_vector_Ea', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa')
+                  else if (stat == 'EC') out@entrogramCloud[,i] <- .Call('v_elsac_vector_Ec', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa')
                 } else {
-                  out@entrogramCloud[,i] <-.Call('v_elsa_vector', as.integer(x), d, as.integer(nc), PACKAGE='elsa')
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogramCloud[,i] <-.Call('v_elsa_vector', as.integer(x), d, as.integer(nc), PACKAGE='elsa')
+                  else if (stat == 'EA') out@entrogramCloud[,i] <-.Call('v_elsa_vector_Ea', as.integer(x), d, as.integer(nc), PACKAGE='elsa') 
+                  else if (stat == 'EC') out@entrogramCloud[,i] <-.Call('v_elsa_vector_Ec', as.integer(x), d, as.integer(nc), PACKAGE='elsa') 
                 }
               }
               out@entrogram <- data.frame(distance=seq(width,width*nlag,width) - (width/2),E=apply(out@entrogramCloud,2,mean,na.rm=TRUE))
@@ -238,9 +264,13 @@ setMethod('entrogram', signature(x='SpatialPolygonsDataFrame'),
               for (i in 1:nlag) {
                 d <- dneigh(xy,d1=0,d2=i*width,method = method,longlat = longlat)@neighbours
                 if (categorical) {
-                  out@entrogram [i,2] <- mean(.Call('v_elsac_vector', as.integer(x), d, as.integer(nc), as.integer(classes),dif),na.rm=TRUE, PACKAGE='elsa')
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogram [i,2] <- mean(.Call('v_elsac_vector', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EA')  out@entrogram [i,2] <- mean(.Call('v_elsac_vector_Ea', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EC')  out@entrogram [i,2] <- mean(.Call('v_elsac_vector_Ec', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa'),na.rm=TRUE)
                 } else {
-                  out@entrogram [i,2] <- mean(.Call('v_elsa_vector', as.integer(x), d, as.integer(nc)),na.rm=TRUE, PACKAGE='elsa')
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogram [i,2] <- mean(.Call('v_elsa_vector', as.integer(x), d, as.integer(nc), PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EA')   out@entrogram [i,2] <- mean(.Call('v_elsa_vector_Ea', as.integer(x), d, as.integer(nc), PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EC')   out@entrogram [i,2] <- mean(.Call('v_elsa_vector_Ec', as.integer(x), d, as.integer(nc), PACKAGE='elsa'),na.rm=TRUE)
                 }
               }
             }
@@ -251,9 +281,14 @@ setMethod('entrogram', signature(x='SpatialPolygonsDataFrame'),
 
 
 setMethod('entrogram', signature(x='SpatialPointsDataFrame'), 
-          function(x, width, cutoff, categorical, nc, dif, zcol,  cloud=FALSE, s=NULL,longlat,...) {
+          function(x, width, cutoff, categorical, nc, dif, zcol,  cloud=FALSE, s=NULL,longlat,stat,...) {
             n <- nrow(x)
             
+            if (missing(stat)) stat <- 'ELSA'
+            else {
+              stat <- toupper(stat)
+              if (!stat %in% c('ELSA','EA','EC')) stop('stat should be either of "ELSA", "Ea", "Ec"!')
+            }
             if (missing(longlat)) longlat <- NULL
             
             if (missing(cutoff)) cutoff<- sqrt((xmin(x)-xmax(x))^2+(ymin(x)-ymax(x))^2) / 3
@@ -335,9 +370,13 @@ setMethod('entrogram', signature(x='SpatialPointsDataFrame'),
               for (i in 1:nlag) {
                 d <- dneigh(xy,d1=0,d2=i*width,longlat = longlat)@neighbours
                 if (categorical) {
-                  out@entrogramCloud[,i] <- .Call('v_elsac_vector', as.integer(x), d, as.integer(nc), as.integer(classes),dif)
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogramCloud[,i] <- .Call('v_elsac_vector', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa')
+                  else if (stat == 'EA') out@entrogramCloud[,i] <- .Call('v_elsac_vector_Ea', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa')
+                  else if (stat == 'EC') out@entrogramCloud[,i] <- .Call('v_elsac_vector_Ec', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa')
                 } else {
-                  out@entrogramCloud[,i] <-.Call('v_elsa_vector', as.integer(x), d, as.integer(nc))
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogramCloud[,i] <-.Call('v_elsa_vector', as.integer(x), d, as.integer(nc))
+                  else if (stat == 'EA') out@entrogramCloud[,i] <-.Call('v_elsa_vector_Ea', as.integer(x), d, as.integer(nc)) 
+                  else if (stat == 'EC') out@entrogramCloud[,i] <-.Call('v_elsa_vector_Ec', as.integer(x), d, as.integer(nc)) 
                 }
               }
               out@entrogram <- data.frame(distance=seq(width,width*nlag,width) - (width/2),E=apply(out@entrogramCloud,2,mean,na.rm=TRUE))
@@ -347,9 +386,13 @@ setMethod('entrogram', signature(x='SpatialPointsDataFrame'),
               for (i in 1:nlag) {
                 d <- dneigh(xy,d1=0,d2=i*width,longlat = longlat)@neighbours
                 if (categorical) {
-                  out@entrogram [i,2] <- mean(.Call('v_elsac_vector', as.integer(x), d, as.integer(nc), as.integer(classes),dif),na.rm=TRUE)
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogram [i,2] <- mean(.Call('v_elsac_vector', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EA')  out@entrogram [i,2] <- mean(.Call('v_elsac_vector_Ea', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EC')  out@entrogram [i,2] <- mean(.Call('v_elsac_vector_Ec', as.integer(x), d, as.integer(nc), as.integer(classes),dif, PACKAGE='elsa'),na.rm=TRUE)
                 } else {
-                  out@entrogram [i,2] <- mean(.Call('v_elsa_vector', as.integer(x), d, as.integer(nc)),na.rm=TRUE)
+                  if (is.null(stat) ||  stat == 'ELSA') out@entrogram [i,2] <- mean(.Call('v_elsa_vector', as.integer(x), d, as.integer(nc), PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EA')   out@entrogram [i,2] <- mean(.Call('v_elsa_vector_Ea', as.integer(x), d, as.integer(nc), PACKAGE='elsa'),na.rm=TRUE)
+                  else if (stat == 'EC')   out@entrogram [i,2] <- mean(.Call('v_elsa_vector_Ec', as.integer(x), d, as.integer(nc), PACKAGE='elsa'),na.rm=TRUE)
                 }
               }
             }
