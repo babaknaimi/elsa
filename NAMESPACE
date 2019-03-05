@@ -7,5 +7,5 @@ importFrom("raster",  "raster", "brick","cellStats","ncell","trim","writeStart",
 exportClasses(Entrogram, neighbours)
 exportMethods(elsa,dneigh,categorize,entrogram,nclass,dif2list,elsa.test,Variogram,lisa,moran, 
               geary,correlogram)
-useDynLib(elsa)
+useDynLib(elsa,.registration = TRUE)
 exportPattern("^[[:alpha:]]+")

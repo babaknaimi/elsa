@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
 # last update: March 2019
-# Version 2.4
+# Version 2.5
 # Licence GPL v3 
 
 
@@ -171,7 +171,7 @@ setMethod('elsa', signature(x='RasterLayer'),
             if (canProcessInMemory(out)) {
               if (categorical) {
                 if (missing(cells)) {
-                  if (stat == 'elsa') {
+                  if (length(stat) == 1 && stat == 'elsa') {
                     out[] <- .Call('v_elsac', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, PACKAGE='elsa')
                     names(out) <- 'ELSA'
                   } else {
@@ -210,35 +210,28 @@ setMethod('elsa', signature(x='RasterLayer'),
                   }
                   if (filename != '') out <- writeRaster(out, filename, ...)
                 } else {
-                  if (stat == 'elsa') out <- .Call('v_elsac_cell', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(cells), PACKAGE='elsa')
-                  else if (stat == 'ec') out <- .Call('v_elsac_cell_Ec', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(cells), PACKAGE='elsa')
-                  else if (stat == 'ea') out <- .Call('v_elsac_cell_Ea', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(cells), PACKAGE='elsa')
-                  else {
+                  if (length(stat) == 1) {
+                    if (stat == 'elsa') out <- .Call('v_elsac_cell', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(cells), PACKAGE='elsa')
+                    else if (stat == 'ec') out <- .Call('v_elsac_cell_Ec', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(cells), PACKAGE='elsa')
+                    else if (stat == 'ea') out <- .Call('v_elsac_cell_Ea', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(cells), PACKAGE='elsa')
+                  } else {
                     xx <- .Call('elsac_cell', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(cells), PACKAGE='elsa')
-                    if (length(stat) > 1) {
-                      out <- list()
-                      if ('ea' %in% stat) {
-                        out[['Ea']] <- xx[[2]]
-                      }
-                      if ('ec' %in% stat) {
-                        out[['Ec']] <- xx[[1]]
-                      }
-                      if ('elsa' %in% stat) {
-                        out[['ELSA']] <-  xx[[2]] * xx[[1]]
-                      }
-                    } else {
-                      if (stat == 'ea') {
-                        out <- xx[[2]]
-                      } else {
-                        out <- xx[[1]]
-                      }
+                    out <- list()
+                    if ('ea' %in% stat) {
+                      out[['Ea']] <- xx[[2]]
+                    }
+                    if ('ec' %in% stat) {
+                      out[['Ec']] <- xx[[1]]
+                    }
+                    if ('elsa' %in% stat) {
+                      out[['ELSA']] <-  xx[[2]] * xx[[1]]
                     }
                   }
                 }
               } else {
                 if (missing(cells)) {
                   
-                  if (stat == 'elsa') {
+                  if (length(stat) == 1 && stat == 'elsa') {
                     out[] <- .Call('v_elsa', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                     names(out) <- 'ELSA'
                   } else {
@@ -278,38 +271,33 @@ setMethod('elsa', signature(x='RasterLayer'),
                   if (filename != '') out <- writeRaster(out, filename, ...)
                   
                 } else {
-                  if (stat == 'elsa') out <- .Call('v_elsa_cell', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(cells), PACKAGE='elsa')
-                  else if (stat == 'ec') out <- .Call('v_elsa_cell_Ec', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(cells), PACKAGE='elsa')
-                  else if (stat == 'ea') out <- .Call('v_elsa_cell_Ea', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(cells), PACKAGE='elsa')
-                  else {
+                  if (length(stat) == 1) {
+                    if (stat == 'elsa') out <- .Call('v_elsa_cell', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(cells), PACKAGE='elsa')
+                    else if (stat == 'ec') out <- .Call('v_elsa_cell_Ec', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(cells), PACKAGE='elsa')
+                    else if (stat == 'ea') out <- .Call('v_elsa_cell_Ea', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(cells), PACKAGE='elsa')
+                  } else {
                     xx <- .Call('elsa_cell', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(cells), PACKAGE='elsa')
-                    if (length(stat) > 1) {
-                      out <- list()
-                      if ('ea' %in% stat) {
-                        out[['Ea']] <- xx[[2]]
-                      }
-                      if ('ec' %in% stat) {
-                        out[['Ec']] <- xx[[1]]
-                      }
-                      if ('elsa' %in% stat) {
-                        out[['ELSA']] <-  xx[[2]] * xx[[1]]
-                      }
-                    } else {
-                      if (stat == 'ea') {
-                        out <- xx[[2]]
-                      } else {
-                        out <- xx[[1]]
-                      }
+                    out <- list()
+                    if ('ea' %in% stat) {
+                      out[['Ea']] <- xx[[2]]
+                    }
+                    if ('ec' %in% stat) {
+                      out[['Ec']] <- xx[[1]]
+                    }
+                    if ('elsa' %in% stat) {
+                      out[['ELSA']] <-  xx[[2]] * xx[[1]]
                     }
                   }
                 }
               }
             } else {
+              cat("\nThe input dataset is considered as a big raster dataset that will be handled out of memory (on the disk), but if you have enough memory on your machine, you can change the settings for maxmemory, and chuncksize, in the rasterOptions function, then the process may be handled in memory that would be much faster...")
+              
               tr <- blockSize(out, minblocks=3, minrows=fdim)
               pb <- pbCreate(tr$n, label='ELSA',...)
               addr <- floor(fdim / 2)
               
-              if (length(stat) > 1) warning(paste('for big rasters, stat can only have one value, so stat = "',toupper(stat[1]),'", is considered!',sep=''))
+              if (length(stat) > 1) warning(paste('for big rasters, stat can only have one value, so stat = "',toupper(stat[1]),'", is considered!\n',sep=''))
               stat <- stat[1]
               
               if (missing(cells)) {
