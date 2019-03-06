@@ -1,28 +1,48 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
-# Last Update :  May 2018
-# Version 1.3
+# Last Update :  March 2019
+# Version 1.4
 # Licence GPL v3 
 
 
 
 if (!isGeneric("categorize")) {
-  setGeneric("categorize", function(x,nc,...)
+  setGeneric("categorize", function(x,nc,probs,...)
     standardGeneric("categorize"))
 }	
 
 setMethod('categorize', signature(x='RasterLayer'), 
-          function(x,nc,filename='',...)  {
+          function(x,nc,probs,filename='',...)  {
             if (missing(nc)) {
               nc <- nclass(x)
               cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
             }
             
+            if (missing(probs) || (is.logical(probs) && probs)) probs <- c(0.025,0.975)
+            else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
+            else {
+              if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
+                probs <- probs
+              } else {
+                warning('probs is not appropriately specified; the default value c(0.025,0.975) is considered!')
+                probs <- c(0.025,0.975)
+              }
+            }
+            #-----
             if (length(nc) == 1) {
               if (nc < 2) stop("nclass should be 2 or greater!")
               r <- cellStats(x,'range')
-              n <- (r[2] - r[1])/ nc
-              nc <- seq(r[1],r[2],n)
+              if (is.numeric(probs)) {
+                # the quantile is used to avoid the effect of outlier on binning!
+                .rq <- quantile(x,probs=probs)
+                n <- (.rq[2] - .rq[1])/ nc
+                nc <- seq(.rq[1],.rq[2],n)
+                nc[1] <- r[1]
+              } else {
+                n <- (r[2] - r[1])/ nc
+                nc <- seq(r[1],r[2],n)
+              }
+              
               nc[1] <- nc[1] - n
               if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
             }
@@ -53,21 +73,45 @@ setMethod('categorize', signature(x='RasterLayer'),
 # in the following, we assume the layers in RasterStackBrick are the same variables in different times,
 # therefore, the categorization should use the same base (class-number) for all layers (i.e., range of classes are specified based on the rangle of all values/layers together)
 setMethod('categorize', signature(x='RasterStackBrick'), 
-          function(x,nc,filename='',...)  {
+          function(x,nc,probs,filename='',...)  {
             if (missing(nc)) {
               nc <- nclass(x)
               cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
             }
             
+            
+            if (missing(probs) || (is.logical(probs) && probs)) probs <- c(0.025,0.975)
+            else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
+            else {
+              if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
+                probs <- probs
+              } else {
+                warning('probs is not appropriately specified; the default value c(0.025,0.975) is considered!')
+                probs <- c(0.025,0.975)
+              }
+            }
+            #-----
             if (length(nc) == 1) {
               if (nc < 2) stop("nclass should be 2 or greater!")
               r <- cellStats(x,'range')
               r <- c(apply(r,1,min)[1],apply(r,1,max)[2])
-              n <- (r[2] - r[1])/ nc
-              nc <- seq(r[1],r[2],n)
+              
+              if (is.numeric(probs)) {
+                # the quantile is used to avoid the effect of outlier on binning!
+                .rq <- t(quantile(x,probs=probs))
+                .rq <- c(apply(.rq,1,min)[1],apply(.rq,1,max)[2])
+                n <- (.rq[2] - .rq[1])/ nc
+                nc <- seq(.rq[1],.rq[2],n)
+                nc[1] <- r[1]
+              } else {
+                n <- (r[2] - r[1])/ nc
+                nc <- seq(r[1],r[2],n)
+              }
+              
               nc[1] <- nc[1] - n
               if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
             }
+            
             out <- raster(x)
             #-----
             if (filename != '') {
@@ -95,19 +139,40 @@ setMethod('categorize', signature(x='RasterStackBrick'),
 #-----------
 
 setMethod('categorize', signature(x='numeric'), 
-          function(x,nc)  {
+          function(x,nc,probs)  {
             if (missing(nc)) {
               stop("number of classes or a verctor including the break values should be specified...!")
             }
             
+            if (missing(probs) || (is.logical(probs) && probs)) probs <- c(0.025,0.975)
+            else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
+            else {
+              if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
+                probs <- probs
+              } else {
+                warning('probs is not appropriately specified; the default value c(0.025,0.975) is considered!')
+                probs <- c(0.025,0.975)
+              }
+            }
+            #-----
             if (length(nc) == 1) {
               if (nc < 2) stop("nclass should be 2 or greater!")
               r <- range(x,na.rm=TRUE)
-              n <- (r[2] - r[1])/ nc
-              nc <- seq(r[1],r[2],n)
+              if (is.numeric(probs)) {
+                # the quantile is used to avoid the effect of outlier on binning!
+                .rq <- quantile(x,probs=probs,na.rm = TRUE)
+                n <- (.rq[2] - .rq[1])/ nc
+                nc <- seq(.rq[1],.rq[2],n)
+                nc[1] <- r[1]
+              } else {
+                n <- (r[2] - r[1])/ nc
+                nc <- seq(r[1],r[2],n)
+              }
+              
               nc[1] <- nc[1] - n
               if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
             }
+            
             .Call('categorize', as.vector(x), as.vector(nc), PACKAGE='elsa')
           }
 )
@@ -115,20 +180,43 @@ setMethod('categorize', signature(x='numeric'),
 
 
 setMethod('categorize', signature(x='list'), 
-          function(x,nc)  {
+          function(x,nc,probs)  {
             if (missing(nc)) {
               stop("number of classes or a verctor including the break values should be specified...!")
             }
+            
+            if (missing(probs) || (is.logical(probs) && probs)) probs <- c(0.025,0.975)
+            else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
+            else {
+              if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
+                probs <- probs
+              } else {
+                warning('probs is not appropriately specified; the default value c(0.025,0.975) is considered!')
+                probs <- c(0.025,0.975)
+              }
+            }
+            #-----
             
             if (length(nc) == 1) {
               if (nc < 2) stop("nclass should be 2 or greater!")
               r <- lapply(x,range,na.rm=TRUE)
               r <- c(min(sapply(r,function(x) x[1]),na.rm=TRUE),max(sapply(r,function(x) x[2]),na.rm=TRUE))
-              n <- (r[2] - r[1])/ nc
-              nc <- seq(r[1],r[2],n)
+              if (is.numeric(probs)) {
+                # the quantile is used to avoid the effect of outlier on binning!
+                .rq <- lapply(x,quantile,probs=probs,na.rm=TRUE)
+                .rq <- c(min(sapply(.rq,function(x) x[1]),na.rm=TRUE),max(sapply(.rq,function(x) x[2]),na.rm=TRUE))
+                n <- (.rq[2] - .rq[1])/ nc
+                nc <- seq(.rq[1],.rq[2],n)
+                nc[1] <- r[1]
+              } else {
+                n <- (r[2] - r[1]) / nc
+                nc <- seq(r[1],r[2],n)
+              }
+              
               nc[1] <- nc[1] - n
               if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
             }
+            
             o <- list()
             for (i in 1:length(x)) {
               o[[i]] <- .Call('categorize', as.vector(x[[i]]), as.vector(nc), PACKAGE='elsa')

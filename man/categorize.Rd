@@ -13,17 +13,20 @@ A function to categorize (discretize or binning) numerical data in the form of a
 }
 
 \usage{
-categorize(x,nc,...)
+categorize(x,nc,probs,...)
 }
 
 \arguments{
   \item{x}{ A \code{RasterLayer} or a \code{numerical vector}}
   \item{nc}{ Number of classes, if missing, it will be automatically detected}
+  \item{probs}{ a two-item numeric vector of the lower and upper probabilities within the range of [0,1] (default: c(0.025,0.975)) to consider a quantile range of values in categorization (to avoid the effects of outliers); if \code{NULL} or \code{FALSE}, then the whole range is used.}
   \item{...}{ Additional parameters for \code{\link[raster]{writeRaster}} function (\code{filename} should be specified as additional argument)}
   
 }
 \details{
 If nc is not specified, the function calls the function \code{nclass} to find the best number of classes. For the details of how nclass works, see the reference.
+
+When outliers do exist in \code{x}, it is likely that they affect the quality of categorization. To avoid their affects, a quantile with the specified probabilities can be used. default is recommended: c(0.025,0.975), but to ignore it, you can turn the probs argument to \code{NULL}.
 }
 
 \value{

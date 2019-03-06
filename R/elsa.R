@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
 # last update: March 2019
-# Version 2.5
+# Version 2.6
 # Licence GPL v3 
 
 
@@ -112,9 +112,11 @@ setMethod('elsa', signature(x='RasterLayer'),
                 if (!all(tolower(stat) %in% c('elsa','ec','ea'))) stop('stat should be selected from "ELSA", "Ea", "Ec"')
               }
             }
-            
+            #----
             if (missing(d)) d <- res(x)[1]
-            if (missing(filename)) filename=''
+            
+            if (missing(filename)) filename <- ''
+            
             if (!missing(nc) && !is.null(nc) && !is.na(nc)) {
               if (missing(categorical)) {
                 if (missing(dif)) categorical <- FALSE
