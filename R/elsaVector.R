@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
-# Date :  August 2016
+# Date :  March 2019
 # last update: March 2019
-# Version 1.1
+# Version 1.2
 # Licence GPL v3 
 #------------------
 

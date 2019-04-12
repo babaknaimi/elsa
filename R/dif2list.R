@@ -1,19 +1,22 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2014
-# Version 1.0
+# Last Update :  April 2019
+# Version 1.1
 # Licence GPL v3 
 
 if (!isGeneric("dif2list")) {
-  setGeneric("dif2list", function(x, pattern)
+  setGeneric("dif2list", function(x, pattern, fact=1)
     standardGeneric("dif2list"))
 }
 
 
 
 setMethod('dif2list', signature(x='data.frameORmatrix'), 
-          function(x, pattern) {
+          function(x, pattern, fact=1) {
             
             x <- x[,1:2]
+            
+            if (missing(fact)) fact <- 1
             
             .f <- function(code,d) {
               d <- t(apply(d,1,function(x) {abs(x - code)}))
@@ -55,7 +58,7 @@ setMethod('dif2list', signature(x='data.frameORmatrix'),
             gc <- x[,1]
             dT <- list()
             for (i in 1:length(gc)) {
-              n <- .f(as.numeric(d[i,]),d)
+              n <- .f(as.numeric(d[i,]),d) * fact
               names(n) <- gc
               dT[[as.character(gc[i])]] <- n
             }
