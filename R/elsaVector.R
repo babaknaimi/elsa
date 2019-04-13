@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  March 2019
-# last update: March 2019
-# Version 1.2
+# last update: April 2019
+# Version 1.3
 # Licence GPL v3 
 #------------------
 
@@ -45,9 +45,9 @@
 }
 #########################
 
-.elsaCategoricalVector <- function(x,d,dif,ncl,nrw,res) {
-  classes <- unique(x)
-  classes <- classes[!is.na(classes)]
+.elsaCategoricalVector <- function(x,d,dif,classes,ncl,nrw,res) {
+  #classes <- unique(x)
+  #classes <- classes[!is.na(classes)]
   
   nc <- length(classes)
   
@@ -67,12 +67,12 @@
 }
 #-----
 
-.elsaCategoricalVectorCell <- function(x,d,dif,ncl,nrw,res,cells) {
+.elsaCategoricalVectorCell <- function(x,d,dif,classes,ncl,nrw,res,cells) {
   #if (missing(d)) d <- res[1]
   #----
-  classes <- unique(x)
-  classes <- classes[!is.na(classes)]
-  
+  # classes <- unique(x)
+  # classes <- classes[!is.na(classes)]
+   
   nc <- length(classes)
   
   if (missing(dif)) {
@@ -90,9 +90,9 @@
   .Call('v_elsac_cell', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, as.integer(cells), PACKAGE='elsa')
 }
 #---------
-.elsaEcEaCategoricalVector <- function(x,d,dif,ncl,nrw,res) {
-  classes <- unique(x)
-  classes <- classes[!is.na(classes)]
+.elsaEcEaCategoricalVector <- function(x,d,dif,classes,ncl,nrw,res) {
+  # classes <- unique(x)
+  # classes <- classes[!is.na(classes)]
   
   nc <- length(classes)
   
@@ -113,11 +113,11 @@
 }
 #-----
 
-.elsaEcEaCategoricalVectorCell <- function(x,d,dif,ncl,nrw,res,cells) {
+.elsaEcEaCategoricalVectorCell <- function(x,d,dif,classes,ncl,nrw,res,cells) {
   #if (missing(d)) d <- res[1]
   #----
-  classes <- unique(x)
-  classes <- classes[!is.na(classes)]
+  # classes <- unique(x)
+  # classes <- classes[!is.na(classes)]
   
   nc <- length(classes)
   

@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
 # last update: April 2019
-# Version 2.7
+# Version 2.9
 # Licence GPL v3 
 
 
@@ -133,7 +133,8 @@ if (!isGeneric("elsa")) {
 
 
 setMethod('elsa', signature(x='RasterLayer'), 
-          function(x,d,nc,categorical,dif,stat,cells,classes,filename,...) {
+          function(x,d,nc,categorical,dif,classes,stat,cells,filename,...) {
+            if (missing(classes)) classes <- NULL
             
             if (missing(stat) || is.null(stat)) stat <- 'elsa'
             else {
@@ -154,14 +155,14 @@ setMethod('elsa', signature(x='RasterLayer'),
             
             if (!missing(nc) && !is.null(nc) && !is.na(nc)) {
               if (missing(categorical)) {
-                if (missing(dif) && missing(classes)) categorical <- FALSE
+                if (missing(dif) && is.null(classes)) categorical <- FALSE
                 else {
-                  if (!missing(dif) && !is.null(dif) && !is.na(dif) && !missing(classes) && !is.null(classes) && !is.na(classes) && .is.categoricalRaster(x)) categorical <- TRUE
+                  if (!missing(dif) && !is.null(dif) && !is.na(dif) && !is.null(classes) && !is.na(classes) && .is.categoricalRaster(x)) categorical <- TRUE
                   else cat("the input data seems continues (if not, use categorical=TRUE)!.... dif/classes is ignored!\n")
                 }
               } 
             } else {
-              if (missing(categorical) && !missing(dif) && !is.null(dif) && !is.na(dif) && !missing(classes) && !is.null(classes) && !is.na(classes)) categorical <- TRUE
+              if (missing(categorical) && !missing(dif) && !is.null(dif) && !is.na(dif) && !is.null(classes) && !is.na(classes)) categorical <- TRUE
             }
             #----
             if (missing(categorical) || !is.logical(categorical)) {
@@ -178,8 +179,8 @@ setMethod('elsa', signature(x='RasterLayer'),
             if (!categorical && missing(nc)) {
               nc <- nclass(x)
             } else if (categorical) {
-              if (missing(classes) || is.na(classes) || is.null(classes)) {
-                if (missing(dif) || is.na(classes) || is.null(classes)) {
+              if (is.null(classes) || is.na(classes)) {
+                if (missing(dif) || is.null(classes) || is.na(classes) ) {
                   classes <- unique(x)
                 } else {
                   if (length(names(dif)) > 1) {
@@ -505,6 +506,8 @@ setMethod('elsa', signature(x='RasterLayer'),
 
 setMethod('elsa', signature(x='SpatialPointsDataFrame'), 
           function(x,d,nc,categorical,dif,classes,stat,zcol,drop,...) {
+            if (missing(classes)) classes <- NULL
+            
             if (missing(d)) stop('d is missed!')
             else if (!class(d) %in% c('numeric','integer','neighbours')) stop('d should be either a number (distance) or an object of class neighbours (created by dneigh function')
             
@@ -562,8 +565,8 @@ setMethod('elsa', signature(x='SpatialPointsDataFrame'),
             if (!categorical && missing(nc)) {
               nc <- nclass(x)
             } else if (categorical) {
-              if (missing(classes) || is.na(classes) || is.null(classes)) {
-                if (missing(dif) || is.na(classes) || is.null(classes)) {
+              if (is.null(classes) || is.na(classes)) {
+                if (missing(dif) || is.null(classes) || is.na(classes) ) {
                   classes <- unique(x)
                 } else {
                   if (length(names(dif)) > 1) {
@@ -614,6 +617,8 @@ setMethod('elsa', signature(x='SpatialPointsDataFrame'),
 
 setMethod('elsa', signature(x='SpatialPolygonsDataFrame'), 
           function(x,d,nc,categorical,dif,classes,stat,zcol,drop,method,...) {
+            if (missing(classes)) classes <- NULL
+            
             if (missing(d)) stop('d is missed!')
             else if (!class(d) %in% c('numeric','integer','neighbours')) stop('d should be either a number (distance) or an object of class neighbours (created by dneigh function')
             
@@ -674,8 +679,8 @@ setMethod('elsa', signature(x='SpatialPolygonsDataFrame'),
             if (!categorical && missing(nc)) {
               nc <- nclass(x)
             } else if (categorical) {
-              if (missing(classes) || is.na(classes) || is.null(classes)) {
-                if (missing(dif) || is.na(classes) || is.null(classes)) {
+              if (is.null(classes) || is.na(classes)) {
+                if (missing(dif) || is.null(classes) || is.na(classes) ) {
                   classes <- unique(x)
                 } else {
                   if (length(names(dif)) > 1) {
@@ -689,7 +694,6 @@ setMethod('elsa', signature(x='SpatialPolygonsDataFrame'),
                 if (is.character(classes)) .ux <- as.character(.ux)
                 if (!all(.ux %in% classes)) stop('the specified "classes" does not cover all or some of values in the input raster!')
               }
-              
               nc <- length(classes)
             }
             #-----
