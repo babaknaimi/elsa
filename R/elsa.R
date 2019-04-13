@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# last update: March 2019
-# Version 2.6
+# last update: April 2019
+# Version 2.7
 # Licence GPL v3 
 
 
@@ -54,51 +54,86 @@
   length(unique(x - round(x))) == 1
 }
 #----------
+# .checkDif <- function(dif,classes) {
+#   nc <- length(classes)
+#   classes <- as.character(classes)
+#   if(is.list(dif)) {
+#     if(!is.null(names(dif))) {
+#       if (!all(unlist(lapply(classes,function(x) {x %in% names(dif)})))) stop("categories in the dif argument do not match with the categories in the input layer!")
+#       dif <- dif[classes]
+#     } else {
+#       if (length(dif) == nc) names(dif) <- classes
+#       else stop("dif content does not match with the categories in the input layer!")
+#     }
+#     if (!all(unlist(lapply(classes,function(x) {length(dif[[x]]) == nc})))) stop("the length of categories' differences in the dif argument does not match with the number of categories!")
+#     dif <- as.vector(as.matrix(as.data.frame(dif)))
+#   } else if (is.matrix(dif) || is.data.frame(dif)) {
+#     if (ncol(dif) != nrow(dif) || ncol != nc) stop("number of rows and columns in dif should be the same, equal to the number of categories!")
+#     if (!all(unlist(lapply(colnames(dif),function(x) {x %in% row.names(dif)})))) {
+#       if (!all(unlist(lapply(colnames(dif),function(x) {x %in% classes})))) {
+#         dif <- as.vector(as.matrix(as.data.frame(dif)))
+#       } else {
+#         row.names(dif) <- colnames(dif)
+#         dif <- dif[classes,classes]
+#         dif <- as.vector(as.matrix(as.data.frame(dif)))
+#       }
+#     } else {
+#       if (!all(unlist(lapply(colnames(dif),function(x) {x %in% classes})))) stop("colnames of dif do not match with the name of categories!")
+#       else {
+#         dif <- dif[classes,classes]
+#         dif <- as.vector(as.matrix(as.data.frame(dif)))
+#       }
+#     }
+#     
+#   } else if (is.vector(dif)) {
+#     if (length(dif) != nc*nc) stop("dif argument does not have an appropriate structure!")
+#   } else stop("dif argument does not have an appropriate structure!")
+#   return(dif)
+# }
+#----------
 .checkDif <- function(dif,classes) {
+  classes <- classes[!is.na(classes)]
   nc <- length(classes)
   classes <- as.character(classes)
   if(is.list(dif)) {
     if(!is.null(names(dif))) {
-      if (!all(unlist(lapply(classes,function(x) {x %in% names(dif)})))) stop("categories in the dif argument do not match with the categories in the input layer!")
+      if (!all(classes %in% names(dif))) stop("categories in the dif argument do not match with the categories in the input layer!")
       dif <- dif[classes]
     } else {
       if (length(dif) == nc) names(dif) <- classes
       else stop("dif content does not match with the categories in the input layer!")
     }
-    if (!all(unlist(lapply(classes,function(x) {length(dif[[x]] == nc)})))) stop("the length of categories' differences in the dif argument does not match with the number of categories!")
+    
+    if (!all(unlist(lapply(classes,function(x) {all(classes %in% names(dif[[x]]))})))) stop("Each item in the dif list should be a named vector with all the classes to which the dissimilarities are specified. It seems that something is wrong with the structure (either some classes are missed in the items, or the vectors are not named appropriately)!")
+    
+    for (i in 1:length(dif)) dif[[i]] <- dif[[i]][classes]
+    
+    #if (!all(unlist(lapply(classes,function(x) {length(dif[[x]]) == nc})))) stop("the length of categories' differences in the dif argument does not match with the number of categories!")
     dif <- as.vector(as.matrix(as.data.frame(dif)))
   } else if (is.matrix(dif) || is.data.frame(dif)) {
-    if (ncol(dif) != nrow(dif) || ncol != nc) stop("number of rows and columns in dif should be the same, equal to the number of categories!")
-    if (!all(unlist(lapply(colnames(dif),function(x) {x %in% row.names(dif)})))) {
-      if (!all(unlist(lapply(colnames(dif),function(x) {x %in% classes})))) {
-        dif <- as.vector(as.matrix(as.data.frame(dif)))
-      } else {
-        row.names(dif) <- colnames(dif)
-        dif <- dif[classes,classes]
-        dif <- as.vector(as.matrix(as.data.frame(dif)))
-      }
-    } else {
-      if (!all(unlist(lapply(colnames(dif),function(x) {x %in% classes})))) stop("colnames of dif do not match with the name of categories!")
-      else {
-        dif <- dif[classes,classes]
-        dif <- as.vector(as.matrix(as.data.frame(dif)))
-      }
-    }
+    #if (ncol(dif) != nrow(dif) || ncol != nc) stop("number of rows and columns in dif should be the same, equal to the number of categories!")
+    if (ncol(dif) != nrow(dif)) stop("number of rows and columns in dif should be the same!")
+    if (colnames(dif) %in% row.names(dif)) stop("names of columns and rows should be the same, corresponding to classes!")
+    if (!all(classes %in% colnames(dif))) stop("Some classes do not exist in dif data.frame/matrix!")
+    dif <- dif[classes,classes]
+    dif <- as.vector(as.matrix(as.data.frame(dif)))
     
   } else if (is.vector(dif)) {
     if (length(dif) != nc*nc) stop("dif argument does not have an appropriate structure!")
   } else stop("dif argument does not have an appropriate structure!")
   return(dif)
 }
-#----------
+########################################
+########################################
+########################################
 if (!isGeneric("elsa")) {
-  setGeneric("elsa", function(x,d,nc,categorical,dif,stat,...)
+  setGeneric("elsa", function(x,d,nc,categorical,dif,classes,stat,...)
     standardGeneric("elsa"))
 }
 
 
 setMethod('elsa', signature(x='RasterLayer'), 
-          function(x,d,nc,categorical,dif,stat,cells,filename,...) {
+          function(x,d,nc,categorical,dif,stat,cells,classes,filename,...) {
             
             if (missing(stat) || is.null(stat)) stat <- 'elsa'
             else {
@@ -119,14 +154,14 @@ setMethod('elsa', signature(x='RasterLayer'),
             
             if (!missing(nc) && !is.null(nc) && !is.na(nc)) {
               if (missing(categorical)) {
-                if (missing(dif)) categorical <- FALSE
+                if (missing(dif) && missing(classes)) categorical <- FALSE
                 else {
-                  if (!is.null(dif) && !is.na(dif) && .is.categoricalRaster(x)) categorical <- TRUE
-                  else cat("the input data seems continues (if not, use categorical=TRUE)!.... dif is ignored!\n")
+                  if (!missing(dif) && !is.null(dif) && !is.na(dif) && !missing(classes) && !is.null(classes) && !is.na(classes) && .is.categoricalRaster(x)) categorical <- TRUE
+                  else cat("the input data seems continues (if not, use categorical=TRUE)!.... dif/classes is ignored!\n")
                 }
               } 
             } else {
-              if (missing(categorical) && !missing(dif) && !is.null(dif) && !is.na(dif)) categorical <- TRUE
+              if (missing(categorical) && !missing(dif) && !is.null(dif) && !is.na(dif) && !missing(classes) && !is.null(classes) && !is.na(classes)) categorical <- TRUE
             }
             #----
             if (missing(categorical) || !is.logical(categorical)) {
@@ -143,7 +178,21 @@ setMethod('elsa', signature(x='RasterLayer'),
             if (!categorical && missing(nc)) {
               nc <- nclass(x)
             } else if (categorical) {
-              classes <- unique(x)
+              if (missing(classes) || is.na(classes) || is.null(classes)) {
+                if (missing(dif) || is.na(classes) || is.null(classes)) {
+                  classes <- unique(x)
+                } else {
+                  if (length(names(dif)) > 1) {
+                    classes <- names(dif)
+                    .ux <- as.character(unique(x))
+                    if (!all(.ux %in% classes)) classes <- .ux
+                  } else classes <- unique(x)
+                }
+              } else {
+                .ux <- unique(x)
+                if (is.character(classes)) .ux <- as.character(.ux)
+                if (!all(.ux %in% classes)) stop('the specified "classes" does not cover all or some of values in the input raster!')
+              }
               nc <- length(classes)
             }
             #-----
@@ -455,7 +504,7 @@ setMethod('elsa', signature(x='RasterLayer'),
 #---------------
 
 setMethod('elsa', signature(x='SpatialPointsDataFrame'), 
-          function(x,d,nc,categorical,dif,stat,zcol,drop,...) {
+          function(x,d,nc,categorical,dif,classes,stat,zcol,drop,...) {
             if (missing(d)) stop('d is missed!')
             else if (!class(d) %in% c('numeric','integer','neighbours')) stop('d should be either a number (distance) or an object of class neighbours (created by dneigh function')
             
@@ -513,7 +562,21 @@ setMethod('elsa', signature(x='SpatialPointsDataFrame'),
             if (!categorical && missing(nc)) {
               nc <- nclass(x)
             } else if (categorical) {
-              classes <- unique(x)
+              if (missing(classes) || is.na(classes) || is.null(classes)) {
+                if (missing(dif) || is.na(classes) || is.null(classes)) {
+                  classes <- unique(x)
+                } else {
+                  if (length(names(dif)) > 1) {
+                    classes <- names(dif)
+                    .ux <- as.character(unique(x))
+                    if (!all(.ux %in% classes)) classes <- .ux
+                  } else classes <- unique(x)
+                }
+              } else {
+                .ux <- unique(x)
+                if (is.character(classes)) .ux <- as.character(.ux)
+                if (!all(.ux %in% classes)) stop('the specified "classes" does not cover all or some of values in the input raster!')
+              }
               nc <- length(classes)
             }
             #-----
@@ -550,7 +613,7 @@ setMethod('elsa', signature(x='SpatialPointsDataFrame'),
 
 
 setMethod('elsa', signature(x='SpatialPolygonsDataFrame'), 
-          function(x,d,nc,categorical,dif,stat,zcol,drop,method,...) {
+          function(x,d,nc,categorical,dif,classes,stat,zcol,drop,method,...) {
             if (missing(d)) stop('d is missed!')
             else if (!class(d) %in% c('numeric','integer','neighbours')) stop('d should be either a number (distance) or an object of class neighbours (created by dneigh function')
             
@@ -611,7 +674,22 @@ setMethod('elsa', signature(x='SpatialPolygonsDataFrame'),
             if (!categorical && missing(nc)) {
               nc <- nclass(x)
             } else if (categorical) {
-              classes <- unique(x)
+              if (missing(classes) || is.na(classes) || is.null(classes)) {
+                if (missing(dif) || is.na(classes) || is.null(classes)) {
+                  classes <- unique(x)
+                } else {
+                  if (length(names(dif)) > 1) {
+                    classes <- names(dif)
+                    .ux <- as.character(unique(x))
+                    if (!all(.ux %in% classes)) classes <- .ux
+                  } else classes <- unique(x)
+                }
+              } else {
+                .ux <- unique(x)
+                if (is.character(classes)) .ux <- as.character(.ux)
+                if (!all(.ux %in% classes)) stop('the specified "classes" does not cover all or some of values in the input raster!')
+              }
+              
               nc <- length(classes)
             }
             #-----

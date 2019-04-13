@@ -13,7 +13,7 @@ Calculate ELSA statistic for a categorical or continuous spatial dataset.
 }
 
 \usage{
-elsa(x,d,nc,categorical,dif,stat,...) 
+elsa(x,d,nc,categorical,dif,classes,stat,...) 
 }
 
 \arguments{
@@ -22,6 +22,7 @@ elsa(x,d,nc,categorical,dif,stat,...)
   \item{nc}{ optional, for continuous data it specifies the number of classes through categorizing the variable. If missing, it is automatically calculated (recommended)}
   \item{categorical}{ logical, specified whether x is a continuous or categorical. If missed the function tries to detect it}
   \item{dif}{the difference between categories, only for categorical }
+  \item{classes}{Optional, only when \code{x} is categorical is a character vector contains classes; would be useful when the dataset is part of a bigger dataset or when it does not contain all the categories, then by specifying the full set of categories, they will be taken into account to calculate ELSA, and therefore, it would be comparable with the other dataset with the same list of classes (these classes may alternatively introduce by \code{dif}, as the classes considered to specify dissimilarities in \code{dif} list, would be used as \code{classes})}
   \item{stat}{specifies which statistic should be calculated by the function; it can be "elsa" (default), or either of the two components of the statistic, "Ea", or "Ec"; ELSA is the product of Ea and Ec. (it is possible to select more than one statistic); this argument is ignored if \code{x} is \code{Spatial*} object as all the three statistics are returned (see details)}
   
   \item{...}{ additional arguments including: 
@@ -64,8 +65,6 @@ Naimi, B., Hamm, N. A., Groen, T. A., Skidmore, A. K., Toxopeus, A. G., & Alibak
 
 
 \examples{
-\dontrun{
-
 file <- system.file('external/dem_example.grd',package='elsa')
 r <- raster(file)
 
@@ -74,8 +73,6 @@ plot(r, main='a continuous raster map')
 e <- elsa(r,d=2000,categorical=FALSE)
 
 plot(e)
-
-}
 }
 
 \keyword{spatial, lisa, elsa, autocorrelation}

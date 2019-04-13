@@ -1,8 +1,8 @@
 Package: elsa
 Type: Package
 Title: Entropy-Based Local Indicator of Spatial Association
-Version: 1.1-10
-Date: 2019-04-12
+Version: 1.1-11
+Date: 2019-04-13
 Author: Babak Naimi
 Depends: methods, sp (>= 1.0-13), raster
 Maintainer: Babak Naimi <naimi.b@gmail.com>
