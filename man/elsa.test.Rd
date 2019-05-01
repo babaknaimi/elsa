@@ -13,7 +13,7 @@ This function uses a non-parametric approach to test whether local spatial autoc
 }
 
 \usage{
-elsa.test(x, d, n, method, null, nc, categorical, dif,...)
+elsa.test(x, d, n, method, null, nc, categorical, dif,classes,...)
 }
 
 \arguments{
@@ -25,6 +25,7 @@ elsa.test(x, d, n, method, null, nc, categorical, dif,...)
   \item{nc}{number of classes (only if x is a continuous variable); if not specified, it is estimated using nclass function}
   \item{categorical}{logical, specifies whether x is a categorical; if not specified, it is guessed by the function}
   \item{dif}{the level of dissimilarities between different categories (only if x is a categorical variable); see \code{\link[elsa]{dif2list}} for more details}
+  \item{classes}{Optional, only when \code{x} is categorical is a character vector contains classes; would be useful when the dataset is part of a bigger dataset or when it does not contain all the categories, then by specifying the full set of categories, they will be taken into account to calculate ELSA, and therefore, it would be comparable with the other dataset with the same list of classes (these classes may alternatively introduce by \code{dif}, as the classes considered to specify dissimilarities in \code{dif} list, would be used as \code{classes})}
   \item{...}{Aditional arguments passed to writeRaster function (applied only when x is Raster)}
 }
 \details{

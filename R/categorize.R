@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
-# Last Update :  March 2019
-# Version 1.4
+# Last Update : Feb. 2020
+# Version 1.5
 # Licence GPL v3 
 
 
@@ -18,14 +18,14 @@ setMethod('categorize', signature(x='RasterLayer'),
               cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
             }
             
-            if (missing(probs) || (is.logical(probs) && probs)) probs <- c(0.025,0.975)
+            if (missing(probs)) probs <- FALSE
             else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
             else {
               if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
                 probs <- probs
               } else {
-                warning('probs is not appropriately specified; the default value c(0.025,0.975) is considered!')
-                probs <- c(0.025,0.975)
+                warning('probs is not appropriately specified, e.g. c(0.025,0.975); NULL is considered')
+                probs <- FALSE
               }
             }
             #-----
@@ -80,14 +80,14 @@ setMethod('categorize', signature(x='RasterStackBrick'),
             }
             
             
-            if (missing(probs) || (is.logical(probs) && probs)) probs <- c(0.025,0.975)
+            if (missing(probs)) probs <- FALSE
             else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
             else {
               if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
                 probs <- probs
               } else {
-                warning('probs is not appropriately specified; the default value c(0.025,0.975) is considered!')
-                probs <- c(0.025,0.975)
+                warning('probs is not appropriately specified, e.g. c(0.025,0.975); NULL is considered')
+                probs <- FALSE
               }
             }
             #-----
@@ -144,14 +144,14 @@ setMethod('categorize', signature(x='numeric'),
               stop("number of classes or a verctor including the break values should be specified...!")
             }
             
-            if (missing(probs) || (is.logical(probs) && probs)) probs <- c(0.025,0.975)
+            if (missing(probs)) probs <- FALSE
             else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
             else {
               if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
                 probs <- probs
               } else {
-                warning('probs is not appropriately specified; the default value c(0.025,0.975) is considered!')
-                probs <- c(0.025,0.975)
+                warning('probs is not appropriately specified, e.g. c(0.025,0.975); NULL is considered')
+                probs <- FALSE
               }
             }
             #-----
@@ -185,14 +185,14 @@ setMethod('categorize', signature(x='list'),
               stop("number of classes or a verctor including the break values should be specified...!")
             }
             
-            if (missing(probs) || (is.logical(probs) && probs)) probs <- c(0.025,0.975)
+            if (missing(probs)) probs <- FALSE
             else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
             else {
               if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
                 probs <- probs
               } else {
-                warning('probs is not appropriately specified; the default value c(0.025,0.975) is considered!')
-                probs <- c(0.025,0.975)
+                warning('probs is not appropriately specified, e.g. c(0.025,0.975); NULL is considered')
+                probs <- FALSE
               }
             }
             #-----

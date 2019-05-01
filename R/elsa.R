@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# last update: April 2019
-# Version 2.9
+# last update: May 2019
+# Version 3.0
 # Licence GPL v3 
 
 
@@ -251,7 +251,7 @@ setMethod('elsa', signature(x='RasterLayer'),
                     names(out) <- nnn
                     
                   } else {
-                    if (stat == 'ec') {
+                    if (stat == 'ea') {
                       out[] <- xx[[2]]
                       names(out) <- 'Ea'
                     } else {
@@ -548,7 +548,7 @@ setMethod('elsa', signature(x='SpatialPointsDataFrame'),
                 }
               } 
             } else {
-              if (missing(categorical) && !missing(dif)) categorical <- TRUE
+              if (missing(categorical) && !missing(dif) && !is.null(classes)) categorical <- TRUE
             }
             #----
             if (missing(categorical) || !is.logical(categorical)) {

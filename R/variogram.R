@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# Latest Update: March 2019
-# Version 1.4
+# Latest Update: May 2019
+# Version 1.5
 # Licence GPL v3 
 
 if (!isGeneric("Variogram")) {
@@ -86,6 +86,8 @@ setMethod('Variogram', signature(x='Spatial'),
             if (!class(x) %in% c('SpatialPolygonsDataFrame','SpatialPointsDataFrame')) stop('x can only be either of RasterLayer, SpatialPointsDataFrame, SpatialPolygonsDataFrame')
             
             n <- nrow(x)
+            
+            if (missing(s)) s <- NULL
             
             if (missing(longlat)) longlat <- NULL
             
