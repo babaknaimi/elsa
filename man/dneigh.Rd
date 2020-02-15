@@ -4,10 +4,12 @@
 \alias{neighd}
 \alias{dneigh,SpatialPoints-method}
 \alias{dneigh,SpatialPolygons-method}
+\alias{dneigh,SpatVector-method}
 \alias{dneigh,data.frameORmatrix-method}
 \alias{neighd,SpatialPoints-method}
 \alias{neighd,SpatialPolygons-method}
 \alias{neighd,data.frameORmatrix-method}
+\alias{neighd,SpatVector-method}
 
 
 

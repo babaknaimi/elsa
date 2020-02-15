@@ -4,6 +4,8 @@
 \alias{elsa,SpatialPointsDataFrame-method}
 \alias{elsa,SpatialPolygonsDataFrame-method}
 \alias{elsa,RasterLayer-method}
+\alias{elsa,SpatRaster-method}
+\alias{elsa,SpatVector-method}
 
 
 \title{Entropy-based Local indicator of Spatial Association}
@@ -17,7 +19,7 @@ elsa(x,d,nc,categorical,dif,classes,stat,...)
 }
 
 \arguments{
-  \item{x}{ a raster object (\code{RasterLayer} or \code{SpatialPointsDataFrame} or \code{SpatialPolygonsDataFrame}}
+  \item{x}{ a raster object (\code{SpatRaster} or \code{RasterLayer}  or \code{SpatVector} or  \code{SpatialPointsDataFrame} or \code{SpatialPolygonsDataFrame} }
   \item{d}{ numeric local distance, or an object of class neighbours created by dneigh when x is SpatialPoints or SpatialPolygons}
   \item{nc}{ optional, for continuous data it specifies the number of classes through categorizing the variable. If missing, it is automatically calculated (recommended)}
   \item{categorical}{ logical, specified whether x is a continuous or categorical. If missed the function tries to detect it}
@@ -75,4 +77,4 @@ e <- elsa(r,d=2000,categorical=FALSE)
 plot(e)
 }
 
-\keyword{spatial, lisa, elsa, autocorrelation}
+\keyword{spatial}

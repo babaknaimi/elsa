@@ -2,6 +2,7 @@
 
 \alias{nclass}
 \alias{nclass,RasterLayer-method}
+\alias{nclass,SpatRaster-method}
 \alias{nclass,numeric-method}
 
 

@@ -1,5 +1,7 @@
 /* Babak Naimi, August 2014 
    naimi.b@gmail.com
+   Last Update: November 2022
+   V 1.1
 */
 #include <R.h>
 #include <Rinternals.h>
@@ -31,7 +33,7 @@ SEXP categorize(SEXP v, SEXP b) {
   xb=REAL(b);
   
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       for (j=0;j < (nb-1);j++) {
         if ((xv[i] > xb[j]) & (xv[i] <= xb[j+1])) {
           xans[i]=j+1;

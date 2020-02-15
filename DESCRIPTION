@@ -1,11 +1,21 @@
 Package: elsa
 Type: Package
 Title: Entropy-Based Local Indicator of Spatial Association
-Version: 1.1-17
-Date: 2020-02-13
-Author: Babak Naimi
-Depends: methods, sp (>= 1.0-13), raster
-Maintainer: Babak Naimi <naimi.b@gmail.com>
-Description: A framework that provides the methods for quantifying entropy-based local indicator of spatial association (ELSA) that can be used for both continuous and categorical data. In addition, this package offers other methods to measure local indicators of spatial associations (LISA). Furthermore, global spatial structure can be measured using a variogram-like diagram, called entrogram. For more information, please check that paper: Naimi et al. (2019) <doi:10.1016/j.spasta.2018.10.001>.
+Version: 1.2-3
+Date: 2022-11-18
+Depends: R (>= 3.5.0), terra, raster
+Imports: methods, sp (>= 1.4.1)
+Suggests: knitr, rmarkdown
+Description: A framework that provides the methods for quantifying entropy-based local indicator of spatial association (ELSA) that can be used for both continuous and categorical data. In addition, this package offers other methods to measure local indicators of spatial associations (LISA). Furthermore, global spatial structure can be measured using a variogram-like diagram, called entrogram. For more information, please check that paper: Naimi, B., Hamm, N. A., Groen, T. A., Skidmore, A. K., Toxopeus, A. G., & Alibakhshi, S. (2019) <doi:10.1016/j.spasta.2018.10.001>.
 License: GPL (>= 3)
+VignetteBuilder: knitr
 URL: http://r-gis.net
+BugReports: https://github.com/babaknaimi/elsa/issues/
+Authors@R: c(
+	person("Babak", "Naimi", role = c("cre", "aut"),  
+			email = "naimi.b@gmail.com", 
+			comment = c(ORCID = "0000-0001-5431-2729")),
+			person("Roger", "Bivand", role = "ctb", comment="part of the dnn C code, from the spdep package"),
+			person("William", "Venables", role = "ctb", comment="part of the dnn C code, taken from the spdep package"),
+			person("Brian", "Ripley", role = "ctb", comment="part of the dnn C code, taken from the spdep package")
+	)

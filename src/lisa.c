@@ -1,7 +1,7 @@
 /* Babak Naimi, July 2016
    naimi.b@gmail.com
-   May 2018
-   v 1.2
+   Last update: November 2022
+   v 1.3
 */
 
 
@@ -64,7 +64,7 @@ SEXP localmoran(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   double sigmaX=0, sigmaX2=0, meanXV, s2=0, s4=0, b2, xbar, sx, s,Ii, Wi, EI, VarI, zj, qq,wikh, wi2;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       sigmaX2=sigmaX2 + xv[i]*xv[i];
@@ -101,7 +101,7 @@ SEXP localmoran(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
       
       if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
         cellnr = ((nnr - 1) * ncol) + nnc;
-        if (!R_IsNA(xv[(cellnr-1)])) {
+        if (R_finite(xv[(cellnr-1)])) {
           q+=1;
           xn[q]=xv[(cellnr-1)];
         }
@@ -185,7 +185,7 @@ SEXP localgeary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   double sigmaX=0,sigmaX2=0,s2=0, xbar, Eij,nn;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       sigmaX2=sigmaX2 + xv[i]*xv[i];
@@ -213,7 +213,7 @@ SEXP localgeary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
       
       if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
         cellnr = ((nnr - 1) * ncol) + nnc;
-        if (!R_IsNA(xv[(cellnr-1)])) {
+        if (R_finite(xv[(cellnr-1)])) {
           Eij=Eij+pow(xi - xv[(cellnr-1)],2);
           q+=1;
         }
@@ -275,7 +275,7 @@ SEXP GG(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   double sigmaX=0, sigmaX2=0, s2=0,xbar, sx, s, Wi, sxbar,ssx, sWi, G, G2, nn ;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       sigmaX2=sigmaX2 + xv[i]*xv[i];
@@ -305,7 +305,7 @@ SEXP GG(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
       
       if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
         cellnr = ((nnr - 1) * ncol) + nnc;
-        if (!R_IsNA(xv[(cellnr-1)])) {
+        if (R_finite(xv[(cellnr-1)])) {
           q+=1;
           xn[q]=xv[(cellnr-1)];
           sx=sx+xn[q];
@@ -360,7 +360,7 @@ SEXP localmoran_vector(SEXP v, SEXP nb) {
   double sigmaX=0, sigmaX2=0, s2=0, s4=0, b2, xbar, sx, s,Ii, Wi, EI, VarI, zj, qq,wikh, wi2;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       sigmaX2=sigmaX2 + xv[i]*xv[i];
@@ -393,7 +393,7 @@ SEXP localmoran_vector(SEXP v, SEXP nb) {
     q=-1;
     for (i=0;i < ngb;i++) {
       a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-      if (!R_IsNA(a)) {
+      if (R_finite(a)) {
         q+=1;
         xn[q]=a;
       }
@@ -457,7 +457,7 @@ SEXP localgeary_vector(SEXP v, SEXP nb) {
   double sigmaX=0,sigmaX2=0,s2=0, xbar, Eij,nn;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       sigmaX2=sigmaX2 + xv[i]*xv[i];
@@ -480,7 +480,7 @@ SEXP localgeary_vector(SEXP v, SEXP nb) {
     q = 0;
     for (i=0;i < ngb;i++) {
       a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-      if (!R_IsNA(a)) {
+      if (R_finite(a)) {
         Eij=Eij+pow(xi - a,2);
         q+=1;
       }
@@ -523,7 +523,7 @@ SEXP GG_vector(SEXP v, SEXP nb) {
   double sigmaX=0, sigmaX2=0, s2=0,xbar, sx, s, Wi, sxbar,ssx, sWi, G, G2, nn ;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       sigmaX2=sigmaX2 + xv[i]*xv[i];
@@ -544,14 +544,14 @@ SEXP GG_vector(SEXP v, SEXP nb) {
     
     ngb = length(VECTOR_ELT(nb,c));
     
-    double xn[ngb];
+    //double xn[ngb];
     q=-1;
     sx=0;
     for (i=0;i < ngb;i++) {
       a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-      if (!R_IsNA(a)) {
+      if (R_finite(a)) {
         q+=1;
-        xn[q]=a;
+        //xn[q]=a;
         sx=sx+a;
       }
     }

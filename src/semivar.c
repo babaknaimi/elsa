@@ -1,8 +1,8 @@
 /* Babak Naimi, July 2016
    naimi.b@gmail.com
    July 2016
-   Latest update: April 2017
-   v 1.1
+   Latest update: November 2022
+   v 1.2
 */
 
 
@@ -60,7 +60,7 @@ SEXP semivar(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   double Eij;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       nv++;
     } else {
@@ -84,7 +84,7 @@ SEXP semivar(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
       
       if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
         cellnr = ((nnr - 1) * ncol) + nnc;
-        if (!R_IsNA(xv[(cellnr-1)])) {
+        if (R_finite(xv[(cellnr-1)])) {
           Eij=Eij+pow(xi - xv[(cellnr-1)],2);
           q+=1;
         }
@@ -149,7 +149,7 @@ SEXP semivar_cells(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc, SEXP cells) {
     R_CheckUserInterrupt();
     j=xcells[c]-1;
     xi=xv[j];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (j / ncol) + 1;
       col = (j + 1) - ((row - 1) * ncol);
       
@@ -161,7 +161,7 @@ SEXP semivar_cells(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc, SEXP cells) {
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             Eij=Eij+pow(xi - xv[(cellnr-1)],2);
             q+=1;
           }
@@ -204,7 +204,7 @@ SEXP semivar_vector(SEXP v, SEXP nb) {
   double Eij;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       nv++;
     } else {
@@ -221,7 +221,7 @@ SEXP semivar_vector(SEXP v, SEXP nb) {
     Eij=0;
     for (i=0;i < ngb;i++) {
       a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-      if (!R_IsNA(a)) {
+      if (R_finite(a)) {
         Eij=Eij+pow(xi - a,2);
         q+=1;
       }

@@ -1,8 +1,9 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
-# Last Update : Feb. 2020
-# Version 1.5
+# Last Update : Nov. 2022
+# Version 1.7
 # Licence GPL v3 
+#-----------
 
 
 
@@ -12,10 +13,12 @@ if (!isGeneric("categorize")) {
 }	
 
 setMethod('categorize', signature(x='RasterLayer'), 
-          function(x,nc,probs,filename='',...)  {
+          function(x,nc,probs,filename='',verbose=TRUE,...)  {
+            if (missing(verbose)) verbose <- TRUE
+            
             if (missing(nc)) {
               nc <- nclass(x)
-              cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
+              if (verbose) cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
             }
             
             if (missing(probs)) probs <- FALSE
@@ -73,10 +76,13 @@ setMethod('categorize', signature(x='RasterLayer'),
 # in the following, we assume the layers in RasterStackBrick are the same variables in different times,
 # therefore, the categorization should use the same base (class-number) for all layers (i.e., range of classes are specified based on the rangle of all values/layers together)
 setMethod('categorize', signature(x='RasterStackBrick'), 
-          function(x,nc,probs,filename='',...)  {
+          function(x,nc,probs,filename='',verbose=TRUE,...)  {
+            
+            if (missing(verbose)) verbose <- TRUE
+            
             if (missing(nc)) {
               nc <- nclass(x)
-              cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
+              if (verbose) cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
             }
             
             
@@ -93,7 +99,7 @@ setMethod('categorize', signature(x='RasterStackBrick'),
             #-----
             if (length(nc) == 1) {
               if (nc < 2) stop("nclass should be 2 or greater!")
-              r <- cellStats(x,'range')
+              r <- cellStats(xx,'range')
               r <- c(apply(r,1,min)[1],apply(r,1,max)[2])
               
               if (is.numeric(probs)) {
@@ -138,6 +144,71 @@ setMethod('categorize', signature(x='RasterStackBrick'),
 
 #-----------
 
+setMethod('categorize', signature(x='SpatRaster'), 
+          function(x,nc,probs,filename='',verbose=TRUE,...)  {
+            
+            if (missing(verbose)) verbose <- TRUE
+            
+            if (missing(nc)) {
+              nc <- nclass(x[[1]])
+              if (nlyr(x) > 1) {
+                if (verbose) cat(paste("the optimum number of class has been identified as ",nc," (ONLY the first layer is considered)!\n"))
+              } else {
+                if (verbose) cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
+              }
+            }
+            
+            
+            if (missing(probs)) probs <- FALSE
+            else if (is.null(probs) || (is.logical(probs) && !probs)) probs <- FALSE
+            else {
+              if (is.numeric(probs) && length(probs) == 2 && all(probs <= 1) && all(probs >= 0) && probs[2] > probs[1]) {
+                probs <- probs
+              } else {
+                warning('probs is not appropriately specified, e.g. c(0.025,0.975); NULL is considered')
+                probs <- FALSE
+              }
+            }
+            #-----
+            if (length(nc) == 1) {
+              if (nc < 2) stop("nclass should be 2 or greater!")
+              r <- global(x,'range',na.rm=TRUE)
+              if (nlyr(x) > 1) r <- c(min(r[,1]),max(r[,2]))
+              else r <- t(r)[,1]
+              
+              if (is.numeric(probs)) {
+                # the quantile is used to avoid the effect of outliers on binning!
+                .rq <- t(global(x,fun=quantile,probs=probs,na.rm=TRUE))
+                .rq <- c(apply(.rq,1,min)[1],apply(.rq,1,max)[2])
+                n <- (.rq[2] - .rq[1])/ nc
+                nc <- seq(.rq[1],.rq[2],n)
+                nc[1] <- r[1]
+              } else {
+                n <- (r[2] - r[1]) / nc
+                nc <- seq(r[1],r[2],n)
+              }
+              
+              nc[1] <- nc[1] - n
+              if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
+            }
+            
+            out <- rast(x)
+            #-----
+            
+            for (i in 1:nlyr(x)) {
+              out[[i]][] <- .Call('categorize', as.vector(x[[i]][]), as.vector(nc), PACKAGE='elsa')
+            }
+            names(out) <- names(x)
+            
+            if (filename != '') writeRaster(out,filename = filename,...)
+            
+            
+            return(out)
+          }
+)
+
+
+#-----------
 setMethod('categorize', signature(x='numeric'), 
           function(x,nc,probs)  {
             if (missing(nc)) {

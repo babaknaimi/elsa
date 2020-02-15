@@ -3,6 +3,7 @@
 \alias{categorize}
 \alias{categorize,RasterLayer-method}
 \alias{categorize,RasterStackBrick-method}
+\alias{categorize,SpatRaster-method}
 \alias{categorize,numeric-method}
 \alias{categorize,list-method}
 
@@ -17,7 +18,7 @@ categorize(x,nc,probs,...)
 }
 
 \arguments{
-  \item{x}{ A \code{RasterLayer} or a \code{numerical vector}}
+  \item{x}{ A \code{SpatRaster} or \code{RasterLayer} or a \code{numerical vector}}
   \item{nc}{ Number of classes, if missing, it will be automatically detected}
   \item{probs}{ a two-item numeric vector of the lower and upper probabilities within the range of [0,1], e.g., c(0.025, 0.975) (default: NULL) to consider a quantile range of values in categorization (to avoid the effects of outliers); if \code{NULL} or \code{FALSE}, then the whole range is used.}
   \item{...}{ Additional parameters for \code{\link[raster]{writeRaster}} function (\code{filename} should be specified as additional argument)}
@@ -58,4 +59,4 @@ plot(rc, main='categorized map')
 
 }
 
-\keyword{spatial, binning}
+\keyword{spatial}

@@ -1,7 +1,7 @@
 /* Babak Naimi, August 2014
  * naimi.b@gmail.com
- * last update: April 2018
-   v 3.1
+ * last update: November 2022
+   v 3.3
 */
 #include <R.h>
 #include <Rinternals.h>
@@ -56,7 +56,7 @@ SEXP elsa(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc) {
   for (c=0;c < n;c++)  {
     R_CheckUserInterrupt();
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (c / ncol) + 1;
       col = (c + 1) - ((row - 1) * ncol);
       
@@ -69,7 +69,7 @@ SEXP elsa(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc) {
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
           }
@@ -178,7 +178,7 @@ SEXP elsa_cell(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP cel
     R_CheckUserInterrupt();
     cn=xcells[c]-1;
     xi=xv[cn];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (cn / ncol) + 1;
       col = (cn + 1) - ((row - 1) * ncol);
       
@@ -191,7 +191,7 @@ SEXP elsa_cell(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP cel
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
           }
@@ -277,7 +277,7 @@ SEXP elsa_vector(SEXP v, SEXP nb, SEXP nclass) {
   for (c=0;c < n;c++)  {
     R_CheckUserInterrupt();
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       
       ngb = length(VECTOR_ELT(nb,c));
       
@@ -285,7 +285,7 @@ SEXP elsa_vector(SEXP v, SEXP nb, SEXP nclass) {
       q=-1;
       for (i=0;i < ngb;i++) {
         a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-        if (!R_IsNA(a)) {
+        if (R_finite(a)) {
           q+=1;
           xn[i]=a;
         }
@@ -389,7 +389,7 @@ SEXP v_elsa(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc) {
   for (c=0;c < n;c++)  {
     R_CheckUserInterrupt();
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (c / ncol) + 1;
       col = (c + 1) - ((row - 1) * ncol);
       
@@ -402,7 +402,7 @@ SEXP v_elsa(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc) {
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
           }
@@ -506,7 +506,7 @@ SEXP v_elsa_cell(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP c
     R_CheckUserInterrupt();
     cn=xcells[c]-1;
     xi=xv[cn];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (cn / ncol) + 1;
       col = (cn + 1) - ((row - 1) * ncol);
       
@@ -519,7 +519,7 @@ SEXP v_elsa_cell(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP c
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
           }
@@ -602,7 +602,7 @@ SEXP v_elsa_vector(SEXP v, SEXP nb, SEXP nclass) {
   for (c=0;c < n;c++)  {
     R_CheckUserInterrupt();
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       
       ngb = length(VECTOR_ELT(nb,c));
       
@@ -610,7 +610,7 @@ SEXP v_elsa_vector(SEXP v, SEXP nb, SEXP nclass) {
       q=-1;
       for (i=0;i < ngb;i++) {
         a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-        if (!R_IsNA(a)) {
+        if (R_finite(a)) {
           q+=1;
           xn[i]=a;
         }
@@ -675,7 +675,7 @@ SEXP v_elsa_vector(SEXP v, SEXP nb, SEXP nclass) {
 SEXP v_elsa_cell_Ea(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP cells) {
   int nProtected=0;
   int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n, cn;
-  double e, w, s, xi, qq, a, count;
+  double w, xi, qq, a;
   
   R_len_t i, j;
   
@@ -717,7 +717,7 @@ SEXP v_elsa_cell_Ea(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEX
     R_CheckUserInterrupt();
     cn=xcells[c]-1;
     xi=xv[cn];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (cn / ncol) + 1;
       col = (cn + 1) - ((row - 1) * ncol);
       
@@ -730,7 +730,7 @@ SEXP v_elsa_cell_Ea(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEX
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
           }
@@ -794,7 +794,7 @@ SEXP v_elsa_cell_Ea(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEX
 SEXP v_elsa_vector_Ea(SEXP v, SEXP nb, SEXP nclass) {
   int nProtected=0;
   int  ncl, n, a, q, ngb;
-  double e, w, s,  qq, count,xi;
+  double  w, qq, xi;
   R_len_t i, j, c;
   
   SEXP ans;
@@ -815,7 +815,7 @@ SEXP v_elsa_vector_Ea(SEXP v, SEXP nb, SEXP nclass) {
   for (c=0;c < n;c++)  {
     R_CheckUserInterrupt();
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       
       ngb = length(VECTOR_ELT(nb,c));
       
@@ -823,7 +823,7 @@ SEXP v_elsa_vector_Ea(SEXP v, SEXP nb, SEXP nclass) {
       q=-1;
       for (i=0;i < ngb;i++) {
         a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-        if (!R_IsNA(a)) {
+        if (R_finite(a)) {
           q+=1;
           xn[i]=a;
         }
@@ -890,7 +890,7 @@ SEXP v_elsa_vector_Ea(SEXP v, SEXP nb, SEXP nclass) {
 SEXP v_elsa_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP cells) {
   int nProtected=0;
   int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n, cn;
-  double e, w, s, xi, qq, a, count;
+  double e, s, xi, qq, a, count;
   
   R_len_t i, j;
   
@@ -932,7 +932,7 @@ SEXP v_elsa_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEX
     R_CheckUserInterrupt();
     cn=xcells[c]-1;
     xi=xv[cn];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (cn / ncol) + 1;
       col = (cn + 1) - ((row - 1) * ncol);
       
@@ -945,7 +945,7 @@ SEXP v_elsa_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEX
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
           }
@@ -1029,7 +1029,7 @@ SEXP v_elsa_vector_Ec(SEXP v, SEXP nb, SEXP nclass) {
   for (c=0;c < n;c++)  {
     R_CheckUserInterrupt();
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       
       ngb = length(VECTOR_ELT(nb,c));
       
@@ -1037,7 +1037,7 @@ SEXP v_elsa_vector_Ec(SEXP v, SEXP nb, SEXP nclass) {
       q=-1;
       for (i=0;i < ngb;i++) {
         a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-        if (!R_IsNA(a)) {
+        if (R_finite(a)) {
           q+=1;
           xn[i]=a;
         }

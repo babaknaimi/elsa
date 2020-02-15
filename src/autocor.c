@@ -1,7 +1,7 @@
 /* Babak Naimi, July 2016
    naimi.b@gmail.com
-   July 2016
-   v 1.0
+   Last update: November 2022
+   v 1.2
 */
 
 
@@ -57,7 +57,7 @@ SEXP moran(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   double sigmaX=0, yi2=0, ybar, yi, yj=0, wij=0;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       nv++;
@@ -84,7 +84,7 @@ SEXP moran(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
       
       if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
         cellnr = ((nnr - 1) * ncol) + nnc;
-        if (!R_IsNA(xv[(cellnr-1)])) {
+        if (R_finite(xv[(cellnr-1)])) {
           q+=1;
           xn[q]=xv[(cellnr-1)];
         }
@@ -151,7 +151,7 @@ SEXP geary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   double sigmaX=0, yi2=0, ybar, yj=0, wij=0;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       nv++;
@@ -178,7 +178,7 @@ SEXP geary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
       
       if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
         cellnr = ((nnr - 1) * ncol) + nnc;
-        if (!R_IsNA(xv[(cellnr-1)])) {
+        if (R_finite(xv[(cellnr-1)])) {
           q+=1;
           xn[q]=xv[(cellnr-1)];
         }
@@ -224,7 +224,7 @@ SEXP geary_vector(SEXP v, SEXP nb) {
   double sigmaX=0, yi2=0, ybar, yj=0, wij=0;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       nv++;
@@ -246,7 +246,7 @@ SEXP geary_vector(SEXP v, SEXP nb) {
     q=-1;
     for (i=0;i < ngb;i++) {
       a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-      if (!R_IsNA(a)) {
+      if (R_finite(a)) {
         q+=1;
         xn[q]=a;
       }
@@ -290,7 +290,7 @@ SEXP moran_vector(SEXP v, SEXP nb) {
   double sigmaX=0, yi2=0, ybar, yi, yj=0, wij=0;
   int *xcells=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xcells[nv]=i;
       sigmaX=sigmaX + xv[i];
       nv++;
@@ -313,7 +313,7 @@ SEXP moran_vector(SEXP v, SEXP nb) {
     q=-1;
     for (i=0;i < ngb;i++) {
       a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-      if (!R_IsNA(a)) {
+      if (R_finite(a)) {
         q+=1;
         xn[q]=a;
       }
@@ -334,4 +334,3 @@ SEXP moran_vector(SEXP v, SEXP nb) {
   UNPROTECT(nProtected);
   return(ans);
 }
-/////

@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
-# Last Update :  March 2019
-# Version 1.3
+# Last Update :  Nov. 2022
+# Version 1.4
 # Licence GPL v3 
 
 # based on the functions poly2nb and dnearneigh in spdep package (Roger Bivand):
@@ -33,18 +33,17 @@
 }
 
 .dnn.poly <- function(x,d,queen=TRUE) {
-  n <- length(slot(x, "polygons"))
+  n <- length(x)
   if (n < 1) stop("non-positive number of entities")
   regid <- row.names(x)
   if (is.null(regid)) regid <- as.character(1:n)
   
-  xpl <- slot(x, "polygons")
+  xpl <- x@ptr$polygonsList()
   xxpl <- vector(mode = "list", length = length(xpl))
   
   for (i in 1:length(xpl)) {
-    xpli <- slot(xpl[[i]], "Polygons")
-    zz <- lapply(xpli, function(j) slot(j, "coords")[-1, ])
-    xxpl[[i]] <- do.call("rbind", zz)
+    xxpl[[i]] <- data.frame(xpl[[i]])
+    names(xxpl[[i]]) <- c('x','y')
   }
   nrs <- sapply(xxpl, nrow)
   vbsnap <- c(-d, d)
@@ -83,17 +82,7 @@
 }
 
 ######################################
-.is.projected <- function(x) {
-  if (inherits(x,'Spatial')) {
-    if (!is.na(is.projected(x))) {
-      is.projected(x)
-    } else {
-      all(bbox(x)[1,] <= 180) & all(bbox(x)[1,] >= -180) & all(bbox(x)[2,] <= 90) & all(bbox(x)[2,] >= -90)
-    }
-  } else if (inherits(x,'matrix') || inherits(x,'data.frame')) {
-    all(range(x[,1],na.rm=TRUE) <= 180) & all(range(x[,1],na.rm=TRUE) >= -180) & all(range(x[,2],na.rm=TRUE) <= 90) & all(range(x[,2],na.rm=TRUE) >= -90)
-  } 
-}
+
 
 
 if (!isGeneric("dneigh")) {
@@ -163,6 +152,64 @@ setMethod('dneigh', signature(x='SpatialPolygons'),
             return(z)
           }
 )
+#---------
+
+setMethod('dneigh', signature(x='SpatVector'), 
+          function(x, d1, d2, longlat,method,...) {
+            if (missing(longlat) || is.null(longlat) || !is.logical(longlat)) longlat <- .is.projected(x)
+            
+            if (missing(d1) || is.null(d1) || !is.numeric(d1)) d1 <- 0
+            
+            if (missing(d2)) stop('d2 should be provided')
+            
+            if (d2 <= d1) stop('d2 should be greater than d1')
+            
+            .type <- x@ptr$type()
+            
+            if (!.type %in% c('points','polygons')) stop('SpatVector can be either of points or polygons')
+            
+            
+            if (.type == "polygons") {
+              if (missing(method) || is.null(method)) method <- 'centroid'
+              else {
+                if (tolower(method)[1] %in% c('bnd','bound','boundary','bond','b')) method <- 'bound'
+                else if (tolower(method)[1] %in% c('center','centre','cent','cnt','c','centroid','centriod','ce','cen')) method <- 'centroid'
+                else {
+                  warning('method is not recognized; the default (centroid) is used!')
+                  method <- 'centroid'
+                }
+              }
+              
+              if (method == 'bound') {
+                dot <- list(...)
+                if ('queen' %in% names(dot) && is.logical(dot[['queen']])) queen <- dot[['queen']]
+                else queen <- TRUE
+                if (d1 > 0) warning('with method="bound", d1 should be 0. So, it is changed to 0!')
+                d1 <- 0
+                z <- .dnn.poly(x,d=d2,queen=queen)
+                attributes(z) <- NULL
+              } else {
+                x <- geom(centroids(x,TRUE))
+                if (nrow(x) < 1) stop("no records in x")
+                z <- .dnn.xy(x,d1,d2,longlat)
+              }
+              if (all(sapply(z,is.null))) stop('There is no links within the specified distance!')
+              z <- new('neighbours',distance1=d1,distance2=d2,neighbours=z)
+            } else {
+              
+              x <- geom(x)[,c('x','y')]
+              if (nrow(x) < 1) stop("no records in x")
+              #if (ncol(x) > 2) stop("Only 2D data accepted")
+              z <- .dnn.xy(x,d1,d2,longlat)
+              if (all(sapply(z,is.null))) stop('There is no links within the specified distance!')
+              z <- new('neighbours',distance1=d1,distance2=d2,neighbours=z)
+            }
+            
+            
+            return(z)
+          }
+)
+#-------
 
 setMethod('dneigh', signature(x='data.frameORmatrix'), 
           function(x, d1, d2, longlat,...) {
@@ -238,6 +285,28 @@ setMethod('neighd', signature(x='SpatialPolygons'),
             if (d2 <= d1) stop('d2 should be greater than d1')
             
             x <- coordinates(x)
+            
+            if (nrow(x) < 1) stop("no records in x")
+            
+            z <- .distance.xy(x,d1,d2,longlat)
+            
+            if (all(sapply(z,is.null))) stop('There is no links within the specified distance!')
+            return(z)
+          }
+)
+#-----
+
+setMethod('neighd', signature(x='SpatVector'), 
+          function(x, d1, d2, longlat,...) {
+            if (missing(longlat) || is.null(longlat) || !is.logical(longlat)) longlat <- .is.projected(x)
+            
+            if (missing(d1) || is.null(d1) || !is.numeric(d1)) d1 <- 0
+            
+            if (missing(d2)) stop('d2 should be provided')
+            
+            if (d2 <= d1) stop('d2 should be greater than d1')
+            
+            x <- geom(centroids(x))[,c('x','y')]
             
             if (nrow(x) < 1) stop("no records in x")
             

@@ -4,8 +4,12 @@
 \alias{geary}
 \alias{moran,Spatial-method}
 \alias{moran,RasterLayer-method}
+\alias{moran,SpatRaster-method}
+\alias{moran,SpatVector-method}
 \alias{geary,Spatial-method}
 \alias{geary,RasterLayer-method}
+\alias{geary,SpatRaster-method}
+\alias{geary,SpatVector-method}
 
 
 
@@ -56,4 +60,4 @@ moran(r, d1=0, d2=2000)
 geary(r, d1=0, d2=2000)
 }
 
-\keyword{spatial, autocorrelation, moran, geary}
+\keyword{spatial}

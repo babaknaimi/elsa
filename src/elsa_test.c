@@ -1,7 +1,7 @@
 /* Babak Naimi, August 2014 
    naimi.b@gmail.com
-   August 2016
-   v 2.0
+   Last Update: November 2022
+   V 2.2
 */
 
 
@@ -70,7 +70,7 @@ static void elsaCalc(double *xv, double *xans, int ncol, int nrow, int ncl, int 
   
   for (c=0;c < n;c++)  {
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (c / ncol) + 1;
       col = (c + 1) - ((row - 1) * ncol);
       
@@ -83,7 +83,7 @@ static void elsaCalc(double *xv, double *xans, int ncol, int nrow, int ncl, int 
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
           }
@@ -145,7 +145,7 @@ static void elsaCalc_cell(double *xv,double *xans, int ncol, int nrow, int ncl, 
     R_CheckUserInterrupt();
     cn=xcells[c]-1;
     xi=xv[cn];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (cn / ncol) + 1;
       col = (cn + 1) - ((row - 1) * ncol);
       
@@ -158,7 +158,7 @@ static void elsaCalc_cell(double *xv,double *xans, int ncol, int nrow, int ncl, 
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
           }
@@ -221,7 +221,7 @@ static void elsa_vectorCalc(double *xv, double *xans, int ncl, int n, SEXP nb) {
   for (c=0;c < n;c++)  {
     R_CheckUserInterrupt();
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       
       ngb = length(VECTOR_ELT(nb,c));
       
@@ -229,7 +229,7 @@ static void elsa_vectorCalc(double *xv, double *xans, int ncl, int n, SEXP nb) {
       q=-1;
       for (i=0;i < ngb;i++) {
         a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-        if (!R_IsNA(a)) {
+        if (R_finite(a)) {
           q+=1;
           xn[i]=a;
         }
@@ -291,10 +291,12 @@ static void elsacCalc(double *xv, double *xans, int ncol, int nrow, int ncl, int
   int c, nw, q, nnr, nnc, cellnr, row, col; 
   double e, w, s, xi, qq, count, a;
   
+  nw = 0;
+  
   R_len_t i, j;
   for (c=0;c < n;c++)  {
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (c / ncol) + 1;
       col = (c + 1) - ((row - 1) * ncol);
       
@@ -315,7 +317,7 @@ static void elsacCalc(double *xv, double *xans, int ncol, int nrow, int ncl, int
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
             for (j=0;j < ncl;j++) {
@@ -381,10 +383,12 @@ static void elsac_cellCalc(double *xv, double *xans, int ncol, int nrow, int ncl
   int c, row, col,  q, nnr, nnc, cellnr, nw, cn, i, j;
   double e, w, s, xi, qq, count, a;
   
+  nw = 0;
+  
   for (c=0;c < n;c++)  {
     cn=xcells[c]-1;
     xi=xv[cn];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       row = (cn / ncol) + 1;
       col = (cn + 1) - ((row - 1) * ncol);
       
@@ -405,7 +409,7 @@ static void elsac_cellCalc(double *xv, double *xans, int ncol, int nrow, int ncl
         
         if ((nnr > 0) & (nnr <= nrow) & (nnc > 0) & (nnc <= ncol)) {
           cellnr = ((nnr - 1) * ncol) + nnc;
-          if (!R_IsNA(xv[(cellnr-1)])) {
+          if (R_finite(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
             for (j=0;j < ncl;j++) {
@@ -469,9 +473,12 @@ static void elsac_cellCalc(double *xv, double *xans, int ncol, int nrow, int ncl
 static void elsac_vectorCalc(double *xv, double *xans, int ncl,int n, int *xcls, double *xdif, double maxW, SEXP nb) {
   int c, nw, q, i, j, ngb; 
   double e, w, s, xi, qq, count, a;
+  
+  nw = 0;
+  
   for (c=0;c < n;c++)  {
     xi=xv[c];
-    if (!R_IsNA(xi)) {
+    if (R_finite(xi)) {
       ngb = length(VECTOR_ELT(nb,c));
       double xn[ngb+1], xw[ngb+1];
       //------
@@ -485,7 +492,7 @@ static void elsac_vectorCalc(double *xv, double *xans, int ncl,int n, int *xcls,
       q=-1;
       for (i=0;i < ngb;i++) {
         a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
-        if (!R_IsNA(a)) {
+        if (R_finite(a)) {
           q+=1;
           xn[q]=a;
           for (j=0;j < ncl;j++) {
@@ -615,7 +622,7 @@ SEXP elsa_test(SEXP v, SEXP null, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP c
   int noNA=0;
   int *xNA=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xNA[noNA]=i;
       noNA++;
     }
@@ -715,7 +722,7 @@ SEXP elsa_cell_test(SEXP v, SEXP null, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, S
   int *xNA=malloc(nv*sizeof(int));
   
   for (i=0;i < nv;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xNA[noNA]=i;
       noNA++;
     }
@@ -726,7 +733,7 @@ SEXP elsa_cell_test(SEXP v, SEXP null, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, S
   int *xNAc=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
     j=xcells[i]-1;
-    if (!R_IsNA(xv[j])) {
+    if (R_finite(xv[j])) {
       xNAc[noNAc]=i;
       noNAc++;
     }
@@ -830,7 +837,7 @@ SEXP elsac_vector_test(SEXP v, SEXP null, SEXP nb,  SEXP nclass, SEXP classes, S
   int noNA=0;
   int *xNA=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xNA[noNA]=i;
       noNA++;
     }
@@ -941,7 +948,7 @@ SEXP elsac_test(SEXP v, SEXP null, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP 
   int noNA=0;
   int *xNA=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xNA[noNA]=i;
       noNA++;
     }
@@ -1055,7 +1062,7 @@ SEXP elsac_cell_test(SEXP v, SEXP null, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, 
   int *xNA=malloc(nv*sizeof(int));
   
   for (i=0;i < nv;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xNA[noNA]=i;
       noNA++;
     }
@@ -1066,7 +1073,7 @@ SEXP elsac_cell_test(SEXP v, SEXP null, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, 
   int *xNAc=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
     j=xcells[i]-1;
-    if (!R_IsNA(xv[j])) {
+    if (R_finite(xv[j])) {
       xNAc[noNAc]=i;
       noNAc++;
     }
@@ -1144,7 +1151,7 @@ SEXP elsa_vector_test(SEXP v, SEXP null, SEXP nb, SEXP nclass, SEXP type, SEXP n
   int noNA=0;
   int *xNA=malloc(n*sizeof(int));
   for (i=0;i < n;i++) {
-    if (!R_IsNA(xv[i])) {
+    if (R_finite(xv[i])) {
       xNA[noNA]=i;
       noNA++;
     }
