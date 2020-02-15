@@ -1,7 +1,7 @@
 /* Babak Naimi, July 2016
    naimi.b@gmail.com
-   last update: April 2018
-   v 3.1
+   last update: February 2020
+   v 3.3
 */
 #include <R.h>
 #include <Rinternals.h>
@@ -18,6 +18,8 @@ SEXP elsac(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP classes
   int nProtected=0;
   int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n,  nw;
   double e, w, s, xi, qq, count, maxW, a;
+  
+  nw = 0;
   
   R_len_t i, j;
   
@@ -163,6 +165,8 @@ SEXP elsac_cell(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP cl
   
   R_len_t i, j;
   
+  nw = 0;
+  
   SEXP ans;
   
   PROTECT(ans = NEW_LIST(2));
@@ -306,6 +310,8 @@ SEXP elsac_vector(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
   int c,  ngb, q, ncl, n, a, nw;
   double e, w, s, xi, qq, count, maxW;
   
+  nw = 0;
+  
   R_len_t i, j;
   
   SEXP ans;
@@ -435,6 +441,8 @@ SEXP v_elsac(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP class
   int nProtected=0;
   int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n, nw;
   double e, w, s, xi, qq, count, maxW, a;
+  
+  nw = 0;
   
   R_len_t i, j;
   
@@ -575,6 +583,8 @@ SEXP v_elsac_cell(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP 
   double e, w, s, xi, qq, count, maxW;
   
   R_len_t i, j;
+  
+  nw = 0;
   
   SEXP ans;
   
@@ -719,6 +729,8 @@ SEXP v_elsac_vector(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
   
   R_len_t i, j;
   
+  nw = 0;
+  
   SEXP ans;
   
   double *xv, *xans, *xdif;
@@ -846,7 +858,9 @@ SEXP v_elsac_vector(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
 SEXP v_elsac_cell_Ea(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP classes, SEXP dif, SEXP cells) {
   int nProtected=0;
   int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n, nw, cn, a;
-  double e, w, s, xi, qq, count, maxW;
+  double w, xi, qq, maxW;
+  
+  nw = 0;
   
   R_len_t i, j;
   
@@ -991,7 +1005,9 @@ SEXP v_elsac_cell_Ea(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SE
 SEXP v_elsac_vector_Ea(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
   int nProtected=0;
   int c,  ngb, q, ncl, n, nw;
-  double e, w, s, xi, qq, count, maxW, a;
+  double w, xi, qq, maxW, a;
+  
+  nw = 0;
   
   R_len_t i, j;
   
@@ -1122,15 +1138,15 @@ SEXP v_elsac_vector_Ea(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
 // Ec stat:
 SEXP v_elsac_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP classes, SEXP dif, SEXP cells) {
   int nProtected=0;
-  int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n, nw, cn, a;
-  double e, w, s, xi, qq, count, maxW;
+  int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n, cn, a;
+  double e, s, xi, qq, count, maxW;
   
   R_len_t i, j;
   
   SEXP ans;
   
   double *xans, *xdif, *xv;
-  int *xrr, *xcc, *xcls, *xcells;
+  int *xrr, *xcc, *xcells;
   
   nrow=INTEGER(nr)[0];
   ncol=INTEGER(nc)[0];
@@ -1166,7 +1182,6 @@ SEXP v_elsac_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SE
   xv=REAL(v);
   xrr=INTEGER(rr);
   xcc=INTEGER(cc);
-  xcls=INTEGER(classes);
   xdif=REAL(dif);
   xcells=INTEGER(cells);
   
@@ -1182,14 +1197,14 @@ SEXP v_elsac_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SE
       row = (cn / ncol) + 1;
       col = (cn + 1) - ((row - 1) * ncol);
       
-      double xw[ngb], xn[ngb];
+      double xn[ngb];
       //------
-      for (i=0; i < ncl;i++) {
+      /*for (i=0; i < ncl;i++) {
         if (xcls[i] == xi) {
           nw=i;
           break;
         }
-      }
+      }*/
       //-------
       
       q=-1;
@@ -1202,12 +1217,6 @@ SEXP v_elsac_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SE
           if (!R_IsNA(xv[(cellnr-1)])) {
             q+=1;
             xn[q]=xv[(cellnr-1)];
-            for (j=0;j < ncl;j++) {
-              if (xcls[j] == xn[q]) {
-                xw[q]=xdif[(nw*ncl)+j];
-                break;
-              }
-            }
           }
         }
       }
@@ -1238,19 +1247,13 @@ SEXP v_elsac_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SE
         }
       }
       e = e + ((count / qq) * log2(count / qq));
-      /*
-      w=0;
-      for (i=0; i <= q;i++) {
-        w = w + xw[i];
-      }
-      w = w / ((qq - 1) * maxW);
-      */
+      
       if (qq > ncl) {
         s = log2(ncl);
       } else {
         s = log2(qq);
       }
-      //xans[c] = (-e * w) / s;
+      
       xans[c] = -e / s;
       
     } else {
@@ -1266,15 +1269,14 @@ SEXP v_elsac_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SE
 
 SEXP v_elsac_vector_Ec(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
   int nProtected=0;
-  int c,  ngb, q, ncl, n, nw;
-  double e, w, s, xi, qq, count, maxW, a;
+  int c,  ngb, q, ncl, n;
+  double e, s, xi, qq, count, maxW, a;
   
   R_len_t i, j;
   
   SEXP ans;
   
   double *xv, *xans, *xdif;
-  int  *xcls;
   
   ncl=INTEGER(nclass)[0]; //nclass for categorical variables referes to the number of unique classes
   
@@ -1296,7 +1298,7 @@ SEXP v_elsac_vector_Ec(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
   
   xans=REAL(ans);
   xv=REAL(v);
-  xcls=INTEGER(classes);
+  
   xdif=REAL(dif);
   
   maxW=0;
@@ -1308,38 +1310,18 @@ SEXP v_elsac_vector_Ec(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
     xi=xv[c];
     if (!R_IsNA(xi)) {
       ngb = length(VECTOR_ELT(nb,c));
-      double xn[ngb+1], xw[ngb+1];
+      double xn[ngb+1];
       //------
-      for (i=0; i < ncl;i++) {
-        if (xcls[i] == xi) {
-          nw=i;
-          break;
-        }
-      }
-      //-------
       q=-1;
       for (i=0;i < ngb;i++) {
         a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
         if (!R_IsNA(a)) {
           q+=1;
           xn[q]=a;
-          for (j=0;j < ncl;j++) {
-            if (xcls[j] == xn[q]) {
-              xw[q]=xdif[(nw*ncl)+j];
-              break;
-            }
-          }
         } 
       }
       q+=1;
       xn[q]=xi; //adding also xi to xn array
-      for (j=0;j < ncl;j++) {
-        if (xcls[j] == xn[q]) {
-          xw[q]=xdif[(nw*ncl)+j];
-          break;
-        }
-      }
-      ////////
       
       // sort
       for (i=0;i <= (q-1);i++) {
@@ -1367,20 +1349,14 @@ SEXP v_elsac_vector_Ec(SEXP v, SEXP nb,  SEXP nclass, SEXP classes, SEXP dif) {
         }
       }
       e = e + ((count / qq) * log2(count / qq));
-      /*
-      w=0;
-      for (i=0; i <= q;i++) {
-        w = w + xw[i];
-      }
-      w = w / ((qq - 1) * maxW);
-      */
+     
       if (qq > ncl) {
         s = log2(ncl);
       } else {
         s = log2(qq);
       }
       
-      //xans[c] = (-e * w) / s;
+      
       xans[c] = -e / s;
     } else {
       xans[c]=R_NaReal;

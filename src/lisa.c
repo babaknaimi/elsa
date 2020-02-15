@@ -1,6 +1,6 @@
 /* Babak Naimi, July 2016
    naimi.b@gmail.com
-   May 2018
+   Last update: February 2020
    v 1.2
 */
 
@@ -544,14 +544,14 @@ SEXP GG_vector(SEXP v, SEXP nb) {
     
     ngb = length(VECTOR_ELT(nb,c));
     
-    double xn[ngb];
+    //double xn[ngb];
     q=-1;
     sx=0;
     for (i=0;i < ngb;i++) {
       a=xv[INTEGER_POINTER(VECTOR_ELT(nb,c))[i] - 1];
       if (!R_IsNA(a)) {
         q+=1;
-        xn[q]=a;
+        //xn[q]=a;
         sx=sx+a;
       }
     }

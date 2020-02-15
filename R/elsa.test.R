@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# Last Update :  April 2019
-# Version 2.4
+# Last Update :  February 2020
+# Version 2.6
 # Licence GPL v3 
 
 if (!isGeneric("elsa.test")) {
@@ -11,9 +11,11 @@ if (!isGeneric("elsa.test")) {
 
 
 setMethod('elsa.test', signature(x='RasterLayer'), 
-          function(x, d, n=99, method, null, nc, categorical, dif,classes,cells,filename,...) {
+          function(x, d, n=99, method, null, nc, categorical, dif,classes,cells,filename,verbose=TRUE,...) {
             
             if (missing(classes)) classes <- NULL
+            
+            if (missing(verbose)) verbose <- TRUE
             
             if (missing(filename)) filename <- ''
             
@@ -21,7 +23,7 @@ setMethod('elsa.test', signature(x='RasterLayer'),
               if (ncell(x) > 20000) n <- 99
               else n <- 999
               
-              cat(paste("n (number of runs in Monte Carlo simulations) is set to",n,"...\n"))
+              if (verbose) cat(paste("n (number of runs in Monte Carlo simulations) is set to",n,"...\n"))
             }
             #----------
             if (missing(method)) method <- 2
@@ -43,7 +45,9 @@ setMethod('elsa.test', signature(x='RasterLayer'),
                 if (missing(dif) && is.null(classes)) categorical <- FALSE
                 else {
                   if (!missing(dif) && !is.null(dif) && !is.na(dif) && !is.null(classes) && !is.na(classes) && .is.categoricalRaster(x)) categorical <- TRUE
-                  else cat("the input data seems continues (if not, use categorical=TRUE)!.... dif/classes is ignored!\n")
+                  else {
+                    if (verbose) cat("the input data seems continues (if not, use categorical=TRUE)!.... dif/classes is ignored!\n")
+                  }
                 }
               } 
             } else {
@@ -57,10 +61,10 @@ setMethod('elsa.test', signature(x='RasterLayer'),
               # guessing whether the layer is categorical:
               if (.is.categoricalRaster(x)) {
                 categorical <- TRUE
-                cat("the input is considered as a categorical variable...\n")
+                if (verbose) cat("the input is considered as a categorical variable...\n")
               } else {
                 categorical <- FALSE
-                cat("the input is considered as a continuous variable...\n")
+                if (verbose) cat("the input is considered as a continuous variable...\n")
               }
             }
             #----
@@ -96,7 +100,10 @@ setMethod('elsa.test', signature(x='RasterLayer'),
             }
             #------------------------
             if (missing(null)) {
-              null <- calc(x,function(x) { x[!is.na(x)] <- sample(classes,length(x[!is.na(x)]),replace=TRUE); x})
+              #null <- calc(x,function(x) { x[!is.na(x)] <- sample(classes,length(x[!is.na(x)]),replace=TRUE); x})
+              null <- raster(x)
+              w <- which(!is.na(x[]))
+              null[w] <- sample(x[w],length(w))
             } else if (inherits(null,'numeric') && length(null) == ncell(x)) {
               nullx <- null
               null <- raster(x)
@@ -104,9 +111,11 @@ setMethod('elsa.test', signature(x='RasterLayer'),
               rm(nullx)
             } else if ((inherits(null,'RasterLayer') && !compareRaster(x,null,crs=FALSE,stopiffalse=FALSE)) || !inherits(null,'RasterLayer')) {
               warning('null is not a numeric vector, or a raster, or is a raster with a different extent, resolution, etc.; so, the null is generated given the default settings!')
-              null <- calc(x,function(x) { x[!is.na(x)] <- sample(classes,length(x[!is.na(x)]),replace=TRUE); x})
+              null <- raster(x)
+              w <- which(!is.na(x[]))
+              null[w] <- sample(x[w],length(w))
             }
-              
+            
             #----------------
             #-----
             w <-.Filter(r=res(x)[1],d1=0,d2=d)
@@ -235,7 +244,6 @@ setMethod('elsa.test', signature(x='RasterLayer'),
             return(out)
           }
 )
-
 #--------------
 # 
 # 
@@ -366,9 +374,11 @@ setMethod('elsa.test', signature(x='RasterLayer'),
 # #---------------
 
 setMethod('elsa.test', signature(x='Spatial'), 
-          function(x, d, n, method, null, nc, categorical, dif,classes,zcol,longlat,...) {
+          function(x, d, n, method, null, nc, categorical, dif,classes,zcol,longlat,verbose=TRUE,...) {
             
             if (missing(classes)) classes <- NULL
+            
+            if (missing(verbose)) verbose <- TRUE
             
             if (missing(d)) stop('d is missed!')
             else if (!class(d) %in% c('numeric','integer','neighbours')) stop('d should be either a number (distance) or an object of class neighbours (created by dneigh function')
@@ -399,7 +409,7 @@ setMethod('elsa.test', signature(x='Spatial'),
               if (nrow(x) > 10000) n <- 99
               else n <- 999
               
-              cat(paste("n (number of runs in Monte Carlo simulations) is set to",n,"...\n"))
+              if (verbose) cat(paste("n (number of runs in Monte Carlo simulations) is set to",n,"...\n"))
             }
             #----------
             if (missing(method)) method <- 2
@@ -433,7 +443,7 @@ setMethod('elsa.test', signature(x='Spatial'),
                 if (missing(dif)) categorical <- FALSE
                 else {
                   categorical <- TRUE
-                  cat("input data is considered categorical, and nc is ignored!\n")
+                  if (verbose) cat("input data is considered categorical, and nc is ignored!\n")
                 }
               } 
             } else {
@@ -444,10 +454,10 @@ setMethod('elsa.test', signature(x='Spatial'),
               # guessing whether the layer is categorical:
               if (.is.categorical(x)) {
                 categorical <- TRUE
-                cat("the specified variable is considered as categorical...\n")
+                if (verbose) cat("the specified variable is considered as categorical...\n")
               } else {
                 categorical <- FALSE
-                cat("the specified variable is considered continuous...\n")
+                if (verbose) cat("the specified variable is considered continuous...\n")
               }
             }
             #----
@@ -512,17 +522,18 @@ setMethod('elsa.test', signature(x='Spatial'),
 
 
 #--------------
-._elsa.testR <- function(x, d, n=99, nc, categorical, dif,classes,cells,filename,...) {
+._elsa.testR <- function(x, d, n=99, nc, categorical, dif,classes,cells,filename,verbose=TRUE,...) {
   if (missing(classes)) classes <- NULL
   if (missing(filename)) filename <- ''
   if (missing(n)) n <- 99
+  if (missing(verbose)) verbose <- TRUE
   
   if (!missing(nc)) {
     if (missing(categorical)) {
       if (missing(dif)) categorical <- FALSE
       else {
         categorical <- TRUE
-        cat("input data is considered categorical, and nc is ignored!\n")
+        if (verbose) cat("input data is considered categorical, and nc is ignored!\n")
       }
     }
   } else {
@@ -533,10 +544,10 @@ setMethod('elsa.test', signature(x='Spatial'),
     # guessing whether the layer is categorical:
     if (.is.categorical(x)) {
       categorical <- TRUE
-      cat("the input is considered as a categorical variable...\n")
+      if (verbose) cat("the input is considered as a categorical variable...\n")
     } else {
       categorical <- FALSE
-      cat("the input is considered as a continuous variable...\n")
+      if (verbose) cat("the input is considered as a continuous variable...\n")
     }
   }
   #----

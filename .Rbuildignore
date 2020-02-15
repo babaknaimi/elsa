@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.travis\.yml$
+.Rhistory
+.gitignore
+README.md
+README.Rmd
+/src/*\.o$
+/src/*\.so$
+^appveyor\.yml$
+/README_files/*

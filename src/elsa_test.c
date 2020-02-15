@@ -1,7 +1,7 @@
 /* Babak Naimi, August 2014 
    naimi.b@gmail.com
-   August 2016
-   v 2.0
+   last update: Fenruary 2020
+   v 2.1
 */
 
 
@@ -291,6 +291,8 @@ static void elsacCalc(double *xv, double *xans, int ncol, int nrow, int ncl, int
   int c, nw, q, nnr, nnc, cellnr, row, col; 
   double e, w, s, xi, qq, count, a;
   
+  nw = 0;
+  
   R_len_t i, j;
   for (c=0;c < n;c++)  {
     xi=xv[c];
@@ -381,6 +383,8 @@ static void elsac_cellCalc(double *xv, double *xans, int ncol, int nrow, int ncl
   int c, row, col,  q, nnr, nnc, cellnr, nw, cn, i, j;
   double e, w, s, xi, qq, count, a;
   
+  nw = 0;
+  
   for (c=0;c < n;c++)  {
     cn=xcells[c]-1;
     xi=xv[cn];
@@ -469,6 +473,9 @@ static void elsac_cellCalc(double *xv, double *xans, int ncol, int nrow, int ncl
 static void elsac_vectorCalc(double *xv, double *xans, int ncl,int n, int *xcls, double *xdif, double maxW, SEXP nb) {
   int c, nw, q, i, j, ngb; 
   double e, w, s, xi, qq, count, a;
+  
+  nw = 0;
+  
   for (c=0;c < n;c++)  {
     xi=xv[c];
     if (!R_IsNA(xi)) {

@@ -53,7 +53,7 @@ Naimi, B., Hamm, N. A., Groen, T. A., Skidmore, A. K., Toxopeus, A. G., & Alibak
 
 
 \examples{
-\dontrun{
+\donttest{
 file <- system.file('external/dem_example.grd',package='elsa')
 
 r <- raster(file)

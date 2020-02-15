@@ -1,7 +1,7 @@
 /* Babak Naimi, August 2014
  * naimi.b@gmail.com
- * last update: April 2018
-   v 3.1
+ * last update: February 2020
+   v 3.2
 */
 #include <R.h>
 #include <Rinternals.h>
@@ -675,7 +675,7 @@ SEXP v_elsa_vector(SEXP v, SEXP nb, SEXP nclass) {
 SEXP v_elsa_cell_Ea(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP cells) {
   int nProtected=0;
   int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n, cn;
-  double e, w, s, xi, qq, a, count;
+  double w, xi, qq, a;
   
   R_len_t i, j;
   
@@ -794,7 +794,7 @@ SEXP v_elsa_cell_Ea(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEX
 SEXP v_elsa_vector_Ea(SEXP v, SEXP nb, SEXP nclass) {
   int nProtected=0;
   int  ncl, n, a, q, ngb;
-  double e, w, s,  qq, count,xi;
+  double  w, qq, xi;
   R_len_t i, j, c;
   
   SEXP ans;
@@ -890,7 +890,7 @@ SEXP v_elsa_vector_Ea(SEXP v, SEXP nb, SEXP nclass) {
 SEXP v_elsa_cell_Ec(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc, SEXP cells) {
   int nProtected=0;
   int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n, cn;
-  double e, w, s, xi, qq, a, count;
+  double e, s, xi, qq, a, count;
   
   R_len_t i, j;
   

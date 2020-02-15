@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# last update: April 2018
-# Version 2.2
+# last update: February 2020
+# Version 2.3
 # Licence GPL v3 
 
 .checkrasterMemory <- function(cells,n=1) {
@@ -16,8 +16,10 @@ if (!isGeneric("entrogram")) {
 
 
 setMethod('entrogram', signature(x='RasterLayer'), 
-          function(x, width, cutoff, categorical, nc, dif, cloud=FALSE, s=NULL,stat,...) {
+          function(x, width, cutoff, categorical, nc, dif, cloud=FALSE, s=NULL,stat,verbose=TRUE,...) {
             re <- res(x)[1]
+            
+            if (missing(verbose)) verbose <- TRUE
             
             if (missing(stat)) stat <- 'ELSA'
             else {
@@ -64,7 +66,7 @@ setMethod('entrogram', signature(x='RasterLayer'),
                 if (missing(dif)) categorical <- FALSE
                 else {
                   categorical <- TRUE
-                  cat("input data is considered categorical, and nc is ignored!\n")
+                  if (verbose) cat("input data is considered categorical, and nc is ignored!\n")
                 }
               }
             } else {
@@ -75,10 +77,10 @@ setMethod('entrogram', signature(x='RasterLayer'),
               # guessing whether the layer is categorical:
               if (.is.categorical(x)) {
                 categorical <- TRUE
-                cat("the input is considered as a categorical variable...\n")
+                if (verbose) cat("the input is considered as a categorical variable...\n")
               } else {
                 categorical <- FALSE
-                cat("the input is considered as a continuous variable...\n")
+                if (verbose) cat("the input is considered as a continuous variable...\n")
               }
             }
             #----
@@ -150,8 +152,10 @@ setMethod('entrogram', signature(x='RasterLayer'),
 
 #-------
 setMethod('entrogram', signature(x='SpatialPolygonsDataFrame'), 
-          function(x, width, cutoff, categorical, nc, dif, zcol,  cloud=FALSE, s=NULL,method,longlat,stat,...) {
+          function(x, width, cutoff, categorical, nc, dif, zcol,  cloud=FALSE, s=NULL,method,longlat,stat,verbose=TRUE,...) {
             n <- nrow(x)
+            
+            if (missing(verbose)) verbose <- TRUE
             
             if (missing(longlat)) longlat <- NULL
             
@@ -202,7 +206,7 @@ setMethod('entrogram', signature(x='SpatialPolygonsDataFrame'),
                 if (missing(dif)) categorical <- FALSE
                 else {
                   categorical <- TRUE
-                  cat("input data is considered categorical, and nc is ignored!\n")
+                  if (verbose) cat("input data is considered categorical, and nc is ignored!\n")
                 }
               }
             } else {
@@ -213,10 +217,10 @@ setMethod('entrogram', signature(x='SpatialPolygonsDataFrame'),
               # guessing whether the layer is categorical:
               if (.is.categorical(x)) {
                 categorical <- TRUE
-                cat("the input is considered as a categorical variable...\n")
+                if (verbose) cat("the input is considered as a categorical variable...\n")
               } else {
                 categorical <- FALSE
-                cat("the input is considered as a continuous variable...\n")
+                if (verbose) cat("the input is considered as a continuous variable...\n")
               }
             }
             #----
@@ -281,8 +285,10 @@ setMethod('entrogram', signature(x='SpatialPolygonsDataFrame'),
 
 
 setMethod('entrogram', signature(x='SpatialPointsDataFrame'), 
-          function(x, width, cutoff, categorical, nc, dif, zcol,  cloud=FALSE, s=NULL,longlat,stat,...) {
+          function(x, width, cutoff, categorical, nc, dif, zcol,  cloud=FALSE, s=NULL,longlat,stat,verbose=TRUE,...) {
             n <- nrow(x)
+            
+            if (missing(verbose)) verbose <- TRUE
             
             if (missing(stat)) stat <- 'ELSA'
             else {
@@ -324,7 +330,7 @@ setMethod('entrogram', signature(x='SpatialPointsDataFrame'),
                 if (missing(dif)) categorical <- FALSE
                 else {
                   categorical <- TRUE
-                  cat("input data is considered categorical, and nc is ignored!\n")
+                  if (verbose) cat("input data is considered categorical, and nc is ignored!\n")
                 }
               }
             } else {
@@ -335,10 +341,10 @@ setMethod('entrogram', signature(x='SpatialPointsDataFrame'),
               # guessing whether the layer is categorical:
               if (.is.categorical(x)) {
                 categorical <- TRUE
-                cat("the input is considered as a categorical variable...\n")
+                if (verbose) cat("the input is considered as a categorical variable...\n")
               } else {
                 categorical <- FALSE
-                cat("the input is considered as a continuous variable...\n")
+                if (verbose) cat("the input is considered as a continuous variable...\n")
               }
             }
             #----

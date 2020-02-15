@@ -55,7 +55,7 @@ Getis, A. and Ord, J. K. 1996 Local spatial statistics: an overview. In P. Longl
 
 
 \examples{
-\dontrun{
+\donttest{
 
 file <- system.file('external/dem_example.grd',package='elsa')
 r <- raster(file)

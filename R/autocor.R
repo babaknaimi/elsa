@@ -1,6 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# Version 1.1
+# Last Update: February 2020
+# Version 1.2
 # Licence GPL v3 
 
 if (!isGeneric("moran")) {
@@ -10,12 +11,15 @@ if (!isGeneric("moran")) {
 
 
 setMethod('moran', signature(x='RasterLayer'), 
-          function(x, d1, d2,...) {
+          function(x, d1, d2,verbose=TRUE,...) {
             
             if (missing(d1)) d1 <- 0
+            
+            if (missing(verbose)) verbose <- TRUE 
+            
             if (missing(d2)) {
               d2 <- res(x)[1]
-              cat("Moran's I is calculated based on d1=",d1," & d2 =",d2,"(eual to ONE cell)\n")
+              if (verbose) cat("Moran's I is calculated based on d1=",d1," & d2 =",d2,"(eual to ONE cell)\n")
             }
             w <-.Filter(r=res(x)[1],d1=d1,d2=d2)[[2]]
             
@@ -24,7 +28,9 @@ setMethod('moran', signature(x='RasterLayer'),
 )
 
 setMethod('moran', signature(x='Spatial'), 
-          function(x, d1, d2,zcol,longlat,...) {
+          function(x, d1, d2,zcol,longlat,verbose=TRUE,...) {
+            
+            if (missing(verbose)) verbose <- TRUE 
             
             if (missing(d1)) d1 <- 0
             if (missing(d2) && !inherits(d1,'neighbours')) stop('d2 should be specified, or alternatively, put an object in d1 created by dneigh')
@@ -62,12 +68,14 @@ if (!isGeneric("geary")) {
 
 
 setMethod('geary', signature(x='RasterLayer'), 
-          function(x, d1, d2,...) {
+          function(x, d1, d2,verbose=TRUE,...) {
+            
+            if (missing(verbose)) verbose <- TRUE 
             
             if (missing(d1)) d1 <- 0
             if (missing(d2)) {
               d2 <- res(x)[1]
-              cat("Geary's c is calculated based on d1=",d1," & d2 =",d2,"(eual to ONE cell)\n")
+              if (verbose) cat("Geary's c is calculated based on d1=",d1," & d2 =",d2,"(eual to ONE cell)\n")
             }
             w <-.Filter(r=res(x)[1],d1=d1,d2=d2)[[2]]
             

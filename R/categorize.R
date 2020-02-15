@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
 # Last Update : Feb. 2020
-# Version 1.5
+# Version 1.6
 # Licence GPL v3 
 
 
@@ -12,10 +12,12 @@ if (!isGeneric("categorize")) {
 }	
 
 setMethod('categorize', signature(x='RasterLayer'), 
-          function(x,nc,probs,filename='',...)  {
+          function(x,nc,probs,filename='',verbose=TRUE,...)  {
+            if (missing(verbose)) verbose <- TRUE
+            
             if (missing(nc)) {
               nc <- nclass(x)
-              cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
+              if (verbose) cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
             }
             
             if (missing(probs)) probs <- FALSE
@@ -73,10 +75,13 @@ setMethod('categorize', signature(x='RasterLayer'),
 # in the following, we assume the layers in RasterStackBrick are the same variables in different times,
 # therefore, the categorization should use the same base (class-number) for all layers (i.e., range of classes are specified based on the rangle of all values/layers together)
 setMethod('categorize', signature(x='RasterStackBrick'), 
-          function(x,nc,probs,filename='',...)  {
+          function(x,nc,probs,filename='',verbose=TRUE,...)  {
+            
+            if (missing(verbose)) verbose <- TRUE
+            
             if (missing(nc)) {
               nc <- nclass(x)
-              cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
+              if (verbose) cat(paste("the optimum number of class has been identified as ",nc,"!\n"))
             }
             
             

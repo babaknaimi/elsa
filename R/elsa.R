@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# last update: May 2019
-# Version 3.0
+# last update: February 2020
+# Version 3.1
 # Licence GPL v3 
 
 
@@ -133,8 +133,10 @@ if (!isGeneric("elsa")) {
 
 
 setMethod('elsa', signature(x='RasterLayer'), 
-          function(x,d,nc,categorical,dif,classes,stat,cells,filename,...) {
+          function(x,d,nc,categorical,dif,classes,stat,cells,filename,verbose=TRUE,...) {
             if (missing(classes)) classes <- NULL
+            
+            if (missing(verbose)) verbose <- TRUE
             
             if (missing(stat) || is.null(stat)) stat <- 'elsa'
             else {
@@ -158,7 +160,9 @@ setMethod('elsa', signature(x='RasterLayer'),
                 if (missing(dif) && is.null(classes)) categorical <- FALSE
                 else {
                   if (!missing(dif) && !is.null(dif) && !is.na(dif) && !is.null(classes) && !is.na(classes) && .is.categoricalRaster(x)) categorical <- TRUE
-                  else cat("the input data seems continues (if not, use categorical=TRUE)!.... dif/classes is ignored!\n")
+                  else {
+                    if (verbose) cat("the input data seems continues (if not, use categorical=TRUE)!.... dif/classes is ignored!\n")
+                  } 
                 }
               } 
             } else {
@@ -169,10 +173,10 @@ setMethod('elsa', signature(x='RasterLayer'),
               # guessing whether the layer is categorical:
               if (.is.categoricalRaster(x)) {
                 categorical <- TRUE
-                cat("the input is considered as a categorical variable...\n")
+                if (verbose) cat("the input is considered as a categorical variable...\n")
               } else {
                 categorical <- FALSE
-                cat("the input is considered as a continuous variable...\n")
+                if (verbose) cat("the input is considered as a continuous variable...\n")
               }
             }
             #----
@@ -343,7 +347,7 @@ setMethod('elsa', signature(x='RasterLayer'),
                 }
               }
             } else {
-              cat("\nThe input dataset is considered as a big raster dataset that will be handled out of memory (on the disk), but if you have enough memory on your machine, you can change the settings for maxmemory, and chuncksize, in the rasterOptions function, then the process may be handled in memory that would be much faster...")
+              if (verbose) cat("\nThe input dataset is considered as a big raster dataset that will be handled out of memory (on the disk), but if you have enough memory on your machine, you can change the settings for maxmemory, and chuncksize, in the rasterOptions function, then the process may be handled in memory that would be much faster...")
               
               tr <- blockSize(out, minblocks=3, minrows=fdim)
               pb <- pbCreate(tr$n, label='ELSA',...)
@@ -505,8 +509,10 @@ setMethod('elsa', signature(x='RasterLayer'),
 #---------------
 
 setMethod('elsa', signature(x='SpatialPointsDataFrame'), 
-          function(x,d,nc,categorical,dif,classes,stat,zcol,drop,...) {
+          function(x,d,nc,categorical,dif,classes,stat,zcol,drop,verbose=TRUE,...) {
             if (missing(classes)) classes <- NULL
+            
+            if (missing(verbose)) verbose <- TRUE
             
             if (missing(d)) stop('d is missed!')
             else if (!class(d) %in% c('numeric','integer','neighbours')) stop('d should be either a number (distance) or an object of class neighbours (created by dneigh function')
@@ -544,7 +550,7 @@ setMethod('elsa', signature(x='SpatialPointsDataFrame'),
                 if (missing(dif)) categorical <- FALSE
                 else {
                   categorical <- TRUE
-                  cat("input data is considered categorical, and nc is ignored!\n")
+                  if (verbose) cat("input data is considered categorical, and nc is ignored!\n")
                 }
               } 
             } else {
@@ -555,10 +561,10 @@ setMethod('elsa', signature(x='SpatialPointsDataFrame'),
               # guessing whether the layer is categorical:
               if (.is.categorical(x)) {
                 categorical <- TRUE
-                cat("the specified variable is considered as categorical...\n")
+                if (verbose) cat("the specified variable is considered as categorical...\n")
               } else {
                 categorical <- FALSE
-                cat("the specified variable is considered continuous...\n")
+                if (verbose) cat("the specified variable is considered continuous...\n")
               }
             }
             #----
@@ -616,8 +622,10 @@ setMethod('elsa', signature(x='SpatialPointsDataFrame'),
 
 
 setMethod('elsa', signature(x='SpatialPolygonsDataFrame'), 
-          function(x,d,nc,categorical,dif,classes,stat,zcol,drop,method,...) {
+          function(x,d,nc,categorical,dif,classes,stat,zcol,drop,method,verbose=TRUE,...) {
             if (missing(classes)) classes <- NULL
+            
+            if (missing(verbose)) verbose <- TRUE
             
             if (missing(d)) stop('d is missed!')
             else if (!class(d) %in% c('numeric','integer','neighbours')) stop('d should be either a number (distance) or an object of class neighbours (created by dneigh function')
@@ -658,7 +666,7 @@ setMethod('elsa', signature(x='SpatialPolygonsDataFrame'),
                 if (missing(dif)) categorical <- FALSE
                 else {
                   categorical <- TRUE
-                  cat("input data is considered categorical, and nc is ignored!\n")
+                  if (verbose) cat("input data is considered categorical, and nc is ignored!\n")
                 }
               } 
             } else {
@@ -669,10 +677,10 @@ setMethod('elsa', signature(x='SpatialPolygonsDataFrame'),
               # guessing whether the layer is categorical:
               if (.is.categorical(x)) {
                 categorical <- TRUE
-                cat("the specified variable is considered as categorical...\n")
+                if (verbose) cat("the specified variable is considered as categorical...\n")
               } else {
                 categorical <- FALSE
-                cat("the specified variable is considered continuous...\n")
+                if (verbose) cat("the specified variable is considered continuous...\n")
               }
             }
             #----

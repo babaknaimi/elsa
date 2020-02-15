@@ -58,4 +58,4 @@ plot(rc, main='categorized map')
 
 }
 
-\keyword{spatial, binning}
+\keyword{spatial}

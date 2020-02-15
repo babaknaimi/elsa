@@ -1,7 +1,7 @@
 /* Babak Naimi, July 2016
    naimi.b@gmail.com
-   July 2016
-   v 1.0
+   Last update: February 2020
+   v 1.1
 */
 
 
@@ -334,4 +334,3 @@ SEXP moran_vector(SEXP v, SEXP nb) {
   UNPROTECT(nProtected);
   return(ans);
 }
-/////

@@ -56,4 +56,4 @@ moran(r, d1=0, d2=2000)
 geary(r, d1=0, d2=2000)
 }
 
-\keyword{spatial, autocorrelation, moran, geary}
+\keyword{spatial}

@@ -75,4 +75,4 @@ e <- elsa(r,d=2000,categorical=FALSE)
 plot(e)
 }
 
-\keyword{spatial, lisa, elsa, autocorrelation}
+\keyword{spatial}
