@@ -19,7 +19,7 @@ categorize(x,nc,probs,...)
 
 \arguments{
   \item{x}{ A \code{SpatRaster} or \code{RasterLayer} or a \code{numerical vector}}
-  \item{nc}{ Number of classes, if missing, it will be automatically detected}
+  \item{nc}{ A single numeric: Number of classes, or a vector specifying the categorization thresholds (in case if x is a multi-layer raster, nc can be a list of vectors); if missing, it will be automatically detected}
   \item{probs}{ a two-item numeric vector of the lower and upper probabilities within the range of [0,1], e.g., c(0.025, 0.975) (default: NULL) to consider a quantile range of values in categorization (to avoid the effects of outliers); if \code{NULL} or \code{FALSE}, then the whole range is used.}
   \item{...}{ Additional parameters for \code{\link[raster]{writeRaster}} function (\code{filename} should be specified as additional argument)}
   

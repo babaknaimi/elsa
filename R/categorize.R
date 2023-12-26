@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
-# Last Update : Nov. 2022
-# Version 1.7
+# Last Update : March 2023
+# Version 1.8
 # Licence GPL v3 
 #-----------
 
@@ -99,44 +99,62 @@ setMethod('categorize', signature(x='RasterStackBrick'),
             #-----
             if (length(nc) == 1) {
               if (nc < 2) stop("nclass should be 2 or greater!")
-              r <- cellStats(xx,'range')
-              r <- c(apply(r,1,min)[1],apply(r,1,max)[2])
+              r <- cellStats(x,'range')
+              
+              if (nlayers(x) > 1) {
+                rr <- list()
+                for (i in 1:nlayers(x)) {
+                  rr[[i]] <- r[,i]
+                }
+              } else rr <- list(r[,1])
+              
               
               if (is.numeric(probs)) {
-                # the quantile is used to avoid the effect of outlier on binning!
+                # the quantile is used to avoid the effect of outliers on binning!
                 .rq <- t(quantile(x,probs=probs))
-                .rq <- c(apply(.rq,1,min)[1],apply(.rq,1,max)[2])
-                n <- (.rq[2] - .rq[1])/ nc
-                nc <- seq(.rq[1],.rq[2],n)
-                nc[1] <- r[1]
+                ncl <- list()
+                for (i in 1:ncol(.rq)) {
+                  n <- (.rq[2,i] - .rq[1,i]) / nc
+                  ncl[[i]] <- seq(.rq[1,i],.rq[2,i],n)
+                  ncl[[i]][1] <- rr[[i]][1] - n
+                  ncl[[i]][length(ncl[[i]])] <- rr[[i]][1]
+                }
+                
               } else {
-                n <- (r[2] - r[1])/ nc
-                nc <- seq(r[1],r[2],n)
+                ncl <- list()
+                for (i in 1:length(rr)) {
+                  n <- (rr[[i]][2] - rr[[i]][1]) / nc
+                  ncl[[i]] <- seq(rr[[i]][1],rr[[i]][2],n)
+                  ncl[[i]][1] <- rr[[i]][1] - n
+                }
               }
+            }  else {
+              if (is.numeric(nc)) {
+                ncl <- vector('list',nlayers(x))
+                for (i in 1:nlayers(x)) ncl[[i]] <- nc
+              } else if (is.list(nc)) {
+                if (length(nc) == nlayers(x)) ncl <- nc
+                else stop('The provided list in nc has a different length than the number of layers in x!')
+              } else stop('nc should be either a single number (number of class) or a numeric vector (list for multiple layers) specifying the categorisation thresholds!')
               
-              nc[1] <- nc[1] - n
-              if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
             }
             
-            out <- raster(x)
-            #-----
-            if (filename != '') {
-              out <- brick(out,nl=nlayers(x))
-              writeRaster(out,filename=filename,...)
-              out <- brick(filename)
-              
+            if (nlayers(x) > 1) {
+              out <- brick(x,values=FALSE)
               for (i in 1:nlayers(x)) {
-                xx <- .Call('categorize', as.vector(x[[i]][]), as.vector(nc), PACKAGE='elsa')
-                out <- update(out,xx,cell=1,band=i)
+                out[[i]][] <- .Call('categorize', as.vector(x[[i]][]), as.vector(ncl[[i]]), PACKAGE='elsa')
               }
             } else {
-              for (i in 1:nlayers(x)) {
-                xx <- raster(out)
-                xx[] <- .Call('categorize', as.vector(x[[i]][]), as.vector(nc), PACKAGE='elsa')
-                out <- addLayer(out,xx)
-              }
+              out <- raster(x)
+              out[] <- .Call('categorize', as.vector(x[]), as.vector(ncl[[1]]), PACKAGE='elsa')
             }
+            #-----
             names(out) <- names(x)
+            
+            if (filename != '') {
+              writeRaster(out,filename=filename,...)
+            }
+            
             return(out)
           }
 )
@@ -173,30 +191,52 @@ setMethod('categorize', signature(x='SpatRaster'),
             if (length(nc) == 1) {
               if (nc < 2) stop("nclass should be 2 or greater!")
               r <- global(x,'range',na.rm=TRUE)
-              if (nlyr(x) > 1) r <- c(min(r[,1]),max(r[,2]))
-              else r <- t(r)[,1]
+              if (nlyr(x) > 1) {
+                rr <- list()
+                for (i in 1:nlyr(x)) {
+                  rr[[i]] <- t(r)[,i]
+                }
+              } else rr <- list(t(r)[,1])
               
+              #---
               if (is.numeric(probs)) {
                 # the quantile is used to avoid the effect of outliers on binning!
                 .rq <- t(global(x,fun=quantile,probs=probs,na.rm=TRUE))
-                .rq <- c(apply(.rq,1,min)[1],apply(.rq,1,max)[2])
-                n <- (.rq[2] - .rq[1])/ nc
-                nc <- seq(.rq[1],.rq[2],n)
-                nc[1] <- r[1]
+                ncl <- list()
+                for (i in 1:ncol(.rq)) {
+                  n <- (.rq[2,i] - .rq[1,i]) / nc
+                  ncl[[i]] <- seq(.rq[1,i],.rq[2,i],n)
+                  ncl[[i]][1] <- rr[[i]][1] - n
+                  ncl[[i]][length(ncl[[i]])] <- rr[[i]][1]
+                }
+                
               } else {
-                n <- (r[2] - r[1]) / nc
-                nc <- seq(r[1],r[2],n)
+                ncl <- list()
+                for (i in 1:length(rr)) {
+                  n <- (rr[[i]][2] - rr[[i]][1]) / nc
+                  ncl[[i]] <- seq(rr[[i]][1],rr[[i]][2],n)
+                  ncl[[i]][1] <- rr[[i]][1] - n
+                }
               }
               
-              nc[1] <- nc[1] - n
-              if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
+              # nc[1] <- nc[1] - n
+              # if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
+            } else {
+              if (is.numeric(nc)) {
+                ncl <- vector('list',nlyr(x))
+                for (i in 1:nlyr(x)) ncl[[i]] <- nc
+              } else if (is.list(nc)) {
+                if (length(nc) == nlyr(x)) ncl <- nc
+                else stop('The provided list in nc has a different length than the number of layers in x!')
+              } else stop('nc should be either a single number (number of class) or a numeric vector (list for multiple layers) specifying the categorisation thresholds!')
+              
             }
             
             out <- rast(x)
             #-----
             
             for (i in 1:nlyr(x)) {
-              out[[i]][] <- .Call('categorize', as.vector(x[[i]][]), as.vector(nc), PACKAGE='elsa')
+              out[[i]][] <- .Call('categorize', as.vector(x[[i]][]), as.vector(ncl[[i]]), PACKAGE='elsa')
             }
             names(out) <- names(x)
             

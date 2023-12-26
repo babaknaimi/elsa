@@ -4,6 +4,7 @@
 
 [![](http://cranlogs.r-pkg.org/badges/grand-total/elsa?color=orange)](https://cran.r-project.org/package=elsa)
 
+[![elsa status badge](https://babaknaimi.r-universe.dev/badges/elsa)](https://babaknaimi.r-universe.dev)
 
 
 

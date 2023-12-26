@@ -1200,7 +1200,8 @@ setMethod('elsa', signature(x='SpatVector'),
             if (missing(d)) stop('d is missed!')
             else if (!class(d) %in% c('numeric','integer','neighbours')) stop('d should be either a number (distance) or an object of class neighbours (created by dneigh function')
             
-            if (!inherits(d,'neighbours')) d <- dneigh(x, 0, d[1])
+            if (!inherits(d,'neighbours')) d <- dneigh(x, 0, d[1],longlat = FALSE)
+              
             d <- d@neighbours
             
             if (missing(drop) || !is.logical(drop[1])) drop <- FALSE

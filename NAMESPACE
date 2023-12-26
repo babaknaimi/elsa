@@ -8,6 +8,6 @@ importFrom("terra", "nlyr", "rast", "readValues", "readStart", "readStop", "writ
            "spatSample","blocks","global","geom","centroids","ext","compareGeom")
 exportClasses(Entrogram, neighbours)
 exportMethods(elsa,dneigh,categorize,entrogram,nclass,dif2list,elsa.test,Variogram,lisa,moran, 
-              geary,correlogram)
+              geary,correlogram,m.elsa)
 useDynLib(elsa,.registration = TRUE)
 exportPattern("^[[:alpha:]]+")
