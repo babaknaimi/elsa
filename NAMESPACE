@@ -6,8 +6,8 @@ importFrom("raster",  "raster", "brick","cellStats","ncell","trim","writeStart",
            "writeRaster","calc","xmin","xmax","ymin","ymax","unique","compareRaster","setValues","addLayer","projection","quantile")
 importFrom("terra", "nlyr", "rast", "readValues", "readStart", "readStop", "writeStart", "writeStop","writeValues",
            "spatSample","blocks","global","geom","centroids","ext","compareGeom")
-exportClasses(Entrogram, neighbours)
-exportMethods(elsa,dneigh,categorize,entrogram,nclass,dif2list,elsa.test,Variogram,lisa,moran, 
-              geary,correlogram,m.elsa)
+#exportClasses(Entrogram, neighbours)
+#exportMethods(elsa,dneigh,categorize,entrogram,nclass,dif2list,elsa.test,Variogram,lisa,moran, 
+#              geary,correlogram,melsa)
 useDynLib(elsa,.registration = TRUE)
 exportPattern("^[[:alpha:]]+")
