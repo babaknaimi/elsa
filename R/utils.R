@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  November 2022
-# last update: December 2023
-# Version 1.1
+# last update: July 2025
+# Version 1.3
 # Licence GPL v3 
 #-----------------------------
 
@@ -14,7 +14,7 @@
   # copied partially from mem_info in the terra package!
   opt <- .eval("terra:::spatOptions()",env=environment())
   opt$ncopies = n
-  v <- x@cpp$mem_needs(opt)
+  v <- x@pntr$mem_needs(opt)
   return(round(v[5]) != 0)
 }
 
