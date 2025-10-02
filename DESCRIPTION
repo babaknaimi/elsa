@@ -1,8 +1,8 @@
 Package: elsa
 Type: Package
 Title: Entropy-Based Local Indicator of Spatial Association
-Version: 1.2-17
-Date: 2025-10-02
+Version: 1.2-18
+Date: 2025-10-03
 Depends: R (>= 3.5.0), terra, raster
 Imports: methods, sp (>= 1.4.1)
 Suggests: knitr, rmarkdown
