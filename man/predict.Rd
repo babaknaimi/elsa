@@ -1,7 +1,7 @@
 \name{predict}
 
 \alias{predict}
-\alias{predict,SpatVector-method}
+\alias{predict.elsakrig}
 
 
 \title{Predict/Interpolate with ELSA-driven local kriging (stationary kernels or Paciorek–Schervish)}
