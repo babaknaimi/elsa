@@ -1,7 +1,7 @@
 /* Babak Naimi, August 2014 
    naimi.b@gmail.com
-   Last Update: November 2022
-   V 1.1
+   Last Update: Oct. 2025
+   V 1.2
 */
 #include <R.h>
 #include <Rinternals.h>
@@ -12,7 +12,7 @@
 #include "Rdefines.h"
 #include "R_ext/Rdynload.h"
 
-SEXP categorize(SEXP v, SEXP b) {
+SEXP C_categorize(SEXP v, SEXP b) {
   R_len_t i, j;
   int n, nb;
   

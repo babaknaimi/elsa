@@ -1,7 +1,7 @@
 /* Babak Naimi, August 2014
  * naimi.b@gmail.com
- * last update: November 2022
-   v 3.3
+ * last update: Oct. 2025
+   v 3.4
 */
 #include <R.h>
 #include <Rinternals.h>
@@ -13,7 +13,7 @@
 #include "R_ext/Rdynload.h"
 
 
-SEXP elsa(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc) {
+SEXP C_elsa(SEXP v, SEXP nc, SEXP nr, SEXP nclass, SEXP rr, SEXP cc) {
   int nProtected=0;
   int c, row, col, ngb, q, nnr, nnc, nrow, ncol, cellnr, ncl, n;
   double e, w, s, xi, qq, count, a;

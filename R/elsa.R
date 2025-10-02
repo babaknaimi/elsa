@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# last update: December 2023
-# Version 3.6
+# last update: Oct. 2025
+# Version 3.7
 # Licence GPL v3 
 
 
@@ -265,7 +265,7 @@ setMethod('elsa', signature(x='RasterLayer'),
                     out[] <- .Call('v_elsa', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                     names(out) <- 'ELSA'
                   } else {
-                    xx <- .Call('elsa', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
+                    xx <- .Call('C_elsa', x[], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                     if (length(stat) > 1) {
                       nnn <- c()
                       if ('ea' %in% stat) {
@@ -334,7 +334,7 @@ setMethod('elsa', signature(x='RasterLayer'),
                 out <- writeStart(out, filename)
                 v <- getValues(x, row=1, nrows=tr$nrows[1]+addr)
                 if (!categorical) {
-                  v <- .Call('elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
+                  v <- .Call('C_elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                 } else {
                   v <- .Call('elsac', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, PACKAGE='elsa')
                 }
@@ -349,7 +349,7 @@ setMethod('elsa', signature(x='RasterLayer'),
                 for (i in 2:(tr$n-1)) {
                   v <- getValues(x, row=tr$row[i]-addr, nrows=tr$nrows[i]+(2*addr))
                   if (!categorical) {
-                    v <- .Call('elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
+                    v <- .Call('C_elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                   } else {
                     v <- .Call('elsac', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, PACKAGE='elsa')
                   }
@@ -367,7 +367,7 @@ setMethod('elsa', signature(x='RasterLayer'),
                 i <- tr$n
                 v <- getValues(x, row=tr$row[i]-addr, nrows=tr$nrows[i]+addr)
                 if (!categorical) {
-                  v <- .Call('elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
+                  v <- .Call('C_elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                 } else {
                   v <- .Call('elsac', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, PACKAGE='elsa')
                 }
@@ -976,7 +976,7 @@ setMethod('elsa', signature(x='SpatRaster'),
                     
                     out <- rast(x[[1]])
                     for (i in 1:nlyr(x)) {
-                      xx <- .Call('elsa', x[[i]][][,1], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
+                      xx <- .Call('C_elsa', x[[i]][][,1], as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                       if ('ea' %in% stat) {
                         outx <- rast(x[[1]])
                         outx[] <- xx[[2]]
@@ -1045,7 +1045,7 @@ setMethod('elsa', signature(x='SpatRaster'),
                 b <- writeStart(out, filename=filename,...)
                 v <- readValues(x, row=1, nrows=b$nrows[1]+addr)
                 if (!categorical) {
-                  v <- .Call('elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
+                  v <- .Call('C_elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                 } else {
                   v <- .Call('elsac', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, PACKAGE='elsa')
                 }
@@ -1060,7 +1060,7 @@ setMethod('elsa', signature(x='SpatRaster'),
                 for (i in 2:(b$n-1)) {
                   v <- readValues(x, row=tr$row[i]-addr, nrows=b$nrows[i]+(2*addr))
                   if (!categorical) {
-                    v <- .Call('elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
+                    v <- .Call('C_elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                   } else {
                     v <- .Call('elsac', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, PACKAGE='elsa')
                   }
@@ -1077,7 +1077,7 @@ setMethod('elsa', signature(x='SpatRaster'),
                 i <- b$n
                 v <- readValues(x, row=b$row[i]-addr, nrows=b$nrows[i])
                 if (!categorical) {
-                  v <- .Call('elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
+                  v <- .Call('C_elsa', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]), PACKAGE='elsa')
                 } else {
                   v <- .Call('elsac', v, as.integer(ncl), as.integer(nrw), as.integer(nc), as.integer(w[,1]), as.integer(w[,2]),as.integer(classes),dif, PACKAGE='elsa')
                 }

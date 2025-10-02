@@ -8,3 +8,4 @@ importFrom("terra", "nlyr", "rast", "readValues", "readStart", "readStop", "writ
            "spatSample","blocks","global","geom","centroids","ext","compareGeom")
 useDynLib(elsa,.registration = TRUE)
 exportPattern("^[[:alpha:]]+")
+S3method(predict, elsakrig)

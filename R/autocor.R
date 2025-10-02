@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  August 2016
-# Last Update: Nov. 2022
-# Version 1.3
+# Last Update: Oct. 2025
+# Version 1.4
 # Licence GPL v3 
 #----------------
 
@@ -24,7 +24,7 @@ setMethod('moran', signature(x='RasterLayer'),
             }
             w <-.Filter(r=res(x)[1],d1=d1,d2=d2)[[2]]
             
-            .Call('moran',x[],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa')
+            .Call('C_moran',x[],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa')
           }
 )
 #-----
@@ -44,11 +44,11 @@ setMethod('moran', signature(x='SpatRaster'),
             if (nlyr(x) > 1) {
               out <- c()
               for (i in 1:nlyr(x)) {
-                out <- c(out,.Call('moran',x[[i]][][,1],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa'))
+                out <- c(out,.Call('C_moran',x[[i]][][,1],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa'))
               }
               
             } else {
-              out <- .Call('moran',x[][,1],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa')
+              out <- .Call('C_moran',x[][,1],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa')
             }
             names(out) <- names(x)
             out
@@ -139,7 +139,7 @@ setMethod('geary', signature(x='RasterLayer'),
             }
             w <-.Filter(r=res(x)[1],d1=d1,d2=d2)[[2]]
             
-            .Call('geary',x[],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa')
+            .Call('C_geary',x[],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa')
           }
 )
 #-----
@@ -159,11 +159,11 @@ setMethod('geary', signature(x='SpatRaster'),
             if (nlyr(x) > 1) {
               out <- c()
               for (i in 1:nlyr(x)) {
-                out <- c(out,.Call('geary',x[[i]][][,1],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa'))
+                out <- c(out,.Call('C_geary',x[[i]][][,1],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa'))
               }
               
             } else {
-              out <- .Call('geary',x[][,1],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa')
+              out <- .Call('C_geary',x[][,1],as.integer(ncol(x)),as.integer(nrow(x)),as.integer(w[,1]),as.integer(w[,2]), PACKAGE='elsa')
             }
             names(out) <- names(x)
             out

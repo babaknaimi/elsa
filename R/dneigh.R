@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
-# Last Update :  Nov. 2022
-# Version 1.4
+# Last Update :  Oct. 2025
+# Version 1.5
 # Licence GPL v3 
 
 # based on the functions poly2nb and dnearneigh in spdep package (Roger Bivand):
@@ -38,7 +38,8 @@
   regid <- row.names(x)
   if (is.null(regid)) regid <- as.character(1:n)
   
-  xpl <- x@ptr$polygonsList()
+  xpl <- slot(x,slotNames(x))$polygonsList()
+  #x@ptr$polygonsList()
   xxpl <- vector(mode = "list", length = length(xpl))
   
   for (i in 1:length(xpl)) {
@@ -164,7 +165,7 @@ setMethod('dneigh', signature(x='SpatVector'),
             
             if (d2 <= d1) stop('d2 should be greater than d1')
             
-            .type <- x@ptr$type()
+            .type <- geomtype(x)
             
             if (!.type %in% c('points','polygons')) stop('SpatVector can be either of points or polygons')
             

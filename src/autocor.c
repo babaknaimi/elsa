@@ -1,7 +1,7 @@
 /* Babak Naimi, July 2016
    naimi.b@gmail.com
-   Last update: November 2022
-   v 1.2
+   Last update: Oct. 2025
+   v 1.3
 */
 
 
@@ -16,7 +16,7 @@
 #include "R_ext/Rdynload.h"
 
 
-SEXP moran(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
+SEXP C_moran(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   int nProtected=0;
   int c, row, col, ngb, nnr, nnc, nrow, ncol, cellnr, n, q;
   double xi;
@@ -110,7 +110,7 @@ SEXP moran(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
 
 
 
-SEXP geary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
+SEXP C_geary(SEXP v, SEXP nc, SEXP nr, SEXP rr, SEXP cc) {
   int nProtected=0;
   int c, row, col, ngb, nnr, nnc, nrow, ncol, cellnr, n, q;
   double xi;

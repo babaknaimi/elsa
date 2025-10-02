@@ -1,7 +1,7 @@
 # Author: Babak Naimi, naimi.b@gmail.com
 # Date :  July 2016
-# Last Update : March 2023
-# Version 1.8
+# Last Update : Oct. 2025
+# Version 1.9
 # Licence GPL v3 
 #-----------
 
@@ -52,7 +52,7 @@ setMethod('categorize', signature(x='RasterLayer'),
             out <- raster(x)
             #-----
             if (canProcessInMemory(out)) {
-              out[] <- .Call('categorize', as.vector(x[]), as.vector(nc), PACKAGE='elsa')
+              out[] <- .Call('C_categorize', as.vector(x[]), as.vector(nc), PACKAGE='elsa')
               if (filename != '') out <- writeRaster(out, filename, ...)
             } else {
               out <- writeStart(out, filename,...)
@@ -61,7 +61,7 @@ setMethod('categorize', signature(x='RasterLayer'),
               
               for (i in 1:tr$n) {
                 v <- getValues(x, row=tr$row[i], nrows=tr$nrows[i])
-                v <- .Call('categorize', v, as.vector(nc), PACKAGE='elsa')
+                v <- .Call('C_categorize', v, as.vector(nc), PACKAGE='elsa')
                 out <- writeValues(out, v, 1)
                 pbStep(pb)
               }
@@ -142,11 +142,11 @@ setMethod('categorize', signature(x='RasterStackBrick'),
             if (nlayers(x) > 1) {
               out <- brick(x,values=FALSE)
               for (i in 1:nlayers(x)) {
-                out[[i]][] <- .Call('categorize', as.vector(x[[i]][]), as.vector(ncl[[i]]), PACKAGE='elsa')
+                out[[i]][] <- .Call('C_categorize', as.vector(x[[i]][]), as.vector(ncl[[i]]), PACKAGE='elsa')
               }
             } else {
               out <- raster(x)
-              out[] <- .Call('categorize', as.vector(x[]), as.vector(ncl[[1]]), PACKAGE='elsa')
+              out[] <- .Call('C_categorize', as.vector(x[]), as.vector(ncl[[1]]), PACKAGE='elsa')
             }
             #-----
             names(out) <- names(x)
@@ -236,7 +236,7 @@ setMethod('categorize', signature(x='SpatRaster'),
             #-----
             
             for (i in 1:nlyr(x)) {
-              out[[i]][] <- .Call('categorize', as.vector(x[[i]][]), as.vector(ncl[[i]]), PACKAGE='elsa')
+              out[[i]][] <- .Call('C_categorize', as.vector(x[[i]][]), as.vector(ncl[[i]]), PACKAGE='elsa')
             }
             names(out) <- names(x)
             
@@ -284,7 +284,7 @@ setMethod('categorize', signature(x='numeric'),
               if (nc[length(nc)] < r[2]) nc[length(nc)] <- r[2]
             }
             
-            .Call('categorize', as.vector(x), as.vector(nc), PACKAGE='elsa')
+            .Call('C_categorize', as.vector(x), as.vector(nc), PACKAGE='elsa')
           }
 )
 
@@ -330,7 +330,7 @@ setMethod('categorize', signature(x='list'),
             
             o <- list()
             for (i in 1:length(x)) {
-              o[[i]] <- .Call('categorize', as.vector(x[[i]]), as.vector(nc), PACKAGE='elsa')
+              o[[i]] <- .Call('C_categorize', as.vector(x[[i]]), as.vector(nc), PACKAGE='elsa')
             }
             o
           }
